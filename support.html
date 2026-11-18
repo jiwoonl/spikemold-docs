@@ -1,0 +1,643 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Supported operations &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'support';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Deploy an event application" href="deploy.html" />
+    <link rel="prev" title="Choose a compatible deployment" href="compatibility.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="compatibility.html">Choose a compatible deployment</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Supported operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploy an event application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readout.html">Terminal host classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resident.html">Packages and model loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Common questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery.html">Runtime failure and ownership contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Deploy on PYNQ-Z2</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="deployment-guide.html" class="nav-link">Deployment</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Supported operations</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="supported-operations">
+<h1>Supported operations<a class="headerlink" href="#supported-operations" title="Link to this heading">#</a></h1>
+<p>Support depends on the operator, input layout, numeric meaning and selected
+execution path. The tables below describe the included PYNQ-Z2 image and the
+explicit host backend. <code class="docutils literal notranslate"><span class="pre">preflight</span></code> reports early risks; <code class="docutils literal notranslate"><span class="pre">compile</span></code> decides exact
+acceptance for your model and example. Neither replaces board load-time checks.</p>
+<section id="native-event-layers">
+<h2>Native event layers<a class="headerlink" href="#native-event-layers" title="Link to this heading">#</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">spikepress.nn</span></code> for hardware-aligned training and export. Parameters have
+floating-point training shadows; deployment uses signed INT4 weights and INT16
+state with the defined reset/decay and accumulation order.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>Input layout</p></th>
+<th class="head"><p>Included image</p></th>
+<th class="head"><p>Main constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Conv1d</span></code>, <code class="docutils literal notranslate"><span class="pre">LIFConv1d</span></code></p></td>
+<td><p>B,T,C,L</p></td>
+<td><p>Supported when admitted</p></td>
+<td><p>Height-one lowering; K1/S1/P0, K3/S1/P1 or K3/S2/P1.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Conv2d</span></code>, <code class="docutils literal notranslate"><span class="pre">LIFConv2d</span></code></p></td>
+<td><p>B,T,C,H,W</p></td>
+<td><p>Supported when admitted</p></td>
+<td><p>Bounded K1/K3 geometry, grouping/depthwise connectivity and capacity.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IFLinear</span></code>, <code class="docutils literal notranslate"><span class="pre">LIFLinear</span></code></p></td>
+<td><p>B,C,1,1 or B,T,C,1,1; native temporal wrappers can accept B,T,C</p></td>
+<td><p>Supported when admitted</p></td>
+<td><p>Unit-spatial linear path; spatial flattening can require an explicit host boundary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">MaxPool1d</span></code></p></td>
+<td><p>B,T,C,L</p></td>
+<td><p>Supported when admitted</p></td>
+<td><p>K2/S2/P0, K3/S1/P1 or K3/S2/P1; K2 requires even length.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">MaxPool2d</span></code></p></td>
+<td><p>B,T,C,H,W</p></td>
+<td><p>Supported when admitted</p></td>
+<td><p>Binary pooling with admitted K/S/P and geometry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EventReadout</span></code></p></td>
+<td><p>B,C,H,W or B,T,C,H,W</p></td>
+<td><p>Terminal event output</p></td>
+<td><p>Unweighted tensor readout; classification heads are separate host components.</p></td>
+</tr>
+<tr class="row-even"><td><p>Residual ADD export</p></td>
+<td><p>Explicit integer temporal graph</p></td>
+<td><p>Host-composed FPGA segments</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">compile_residual_add</span></code>; preserves multiplicity and rejects unsupported topology/overflow.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Threshold</span></code></p></td>
+<td><p>B,C or B,C,H,W</p></td>
+<td><p>Frontend-dependent</p></td>
+<td><p>Explicit single-step threshold helper, not a general multi-step neuron.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">DirectCurrentIF</span></code>, <code class="docutils literal notranslate"><span class="pre">DirectCurrentLIF</span></code></p></td>
+<td><p>Explicit current-input contract</p></td>
+<td><p>Disabled on included image</p></td>
+<td><p>Available in supported host plans; they do not enable analog FPGA ingress.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><a class="reference internal" href="api/nn.html"><span class="std std-doc">Layer constructors</span></a> and <a class="reference internal" href="api/parameters.html"><span class="std std-doc">parameters</span></a> document signatures and defaults. <code class="docutils literal notranslate"><span class="pre">MaxPool2d</span></code> and <code class="docutils literal notranslate"><span class="pre">Threshold</span></code> retain the existing <code class="docutils literal notranslate"><span class="pre">EventMaxPool2d</span></code> and <code class="docutils literal notranslate"><span class="pre">EventIF</span></code> implementations. Native temporal
+state carries within one call and resets between calls. Exact admitted
+retention values are 1, 1/2, 1/4, 1/8 and 1/16. General continuous PLIF,
+subtractive-reset or external-library neuron semantics are not silently converted.</p>
+</section>
+<section id="explicit-c-host-operations">
+<h2>Explicit C host operations<a class="headerlink" href="#explicit-c-host-operations" title="Link to this heading">#</a></h2>
+<p>Select <code class="docutils literal notranslate"><span class="pre">allow_host_ops=True</span></code> to capture supported fixed-shape host operations.
+The default follows source float32/float64 precision. Mixed precision, layouts,
+mutation and transitions back into binary event input have explicit checks.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Supported host capture</p></th>
+<th class="head"><p>Qualification / restrictions</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Synapses</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">torch.nn.Conv2d</span></code>, <code class="docutils literal notranslate"><span class="pre">Linear</span></code>, eval <code class="docutils literal notranslate"><span class="pre">BatchNorm2d</span></code> affine</p></td>
+<td><p>Supported fixed shapes; bias/groups/dilation follow the host contract.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pooling / reduction</p></td>
+<td><p>Max/average/adaptive average pool, sum, mean</p></td>
+<td><p>Numeric output is not implicitly a valid binary event input.</p></td>
+</tr>
+<tr class="row-even"><td><p>Layout / merge</p></td>
+<td><p>Reshape, flatten, transpose, permute, fixed slice, concat, ADD/multiply, binary OR/AND</p></td>
+<td><p>Only the implemented static capture patterns; arbitrary Python graphs reject.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Activation / neuron</p></td>
+<td><p>ReLU, sigmoid, tanh, explicit threshold and DirectCurrent IF/LIF</p></td>
+<td><p>Preserve the documented quantization, reset and dtype semantics.</p></td>
+</tr>
+<tr class="row-even"><td><p>Classification</p></td>
+<td><p>Mean/count/temporal/flatten features, Linear head, softmax/top-k</p></td>
+<td><p>Explicit host work; include it in full application timing.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dynamic INT8</p></td>
+<td><p>Explicit Conv/Linear <code class="docutils literal notranslate"><span class="pre">quantize_dynamic()</span></code></p></td>
+<td><p>Float32 outputs; task accuracy must be revalidated.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Try the <a class="reference internal" href="tutorials.html#use-c-host-operators"><span class="std std-ref">C float32 and INT8 examples</span></a>.
+See <a class="reference internal" href="execution.html"><span class="std std-doc">execution details</span></a> for exact capture, dtype, buffer and
+gradient restrictions. CPU native multi-step training is opt-in and supports
+first-order gradients; it is distinct from CUDA compiled recurrence.</p>
+</section>
+<section id="where-operations-run">
+<h2>Where operations run<a class="headerlink" href="#where-operations-run" title="Link to this heading">#</a></h2>
+<p>Resident OR is disabled in the included image; its legacy API is documented
+only for compatibility. ADD uses the explicit <a class="reference internal" href="residuals.html"><span class="std std-doc">residual path</span></a>.</p>
+<p>The native table describes event-engine execution; the host table describes
+explicit C execution. A hybrid graph can contain both, subject to supported
+boundaries. Bounded residual addition can use host-composed programs, while
+resident residuals and weighted FPGA readout are disabled in the included image.
+The compiler does not provide a general fallback for unsupported operators.</p>
+<p>LSTM/GRU, arbitrary attention/dynamic graphs, general NIR imports and arbitrary
+SpikingJelly/snnTorch checkpoints are outside the verified general deployment
+scope. An operation available in PyTorch training is not automatically supported
+by the compiler. Follow <a class="reference internal" href="pytorch.html"><span class="std std-doc">PyTorch authoring</span></a> before porting a model.</p>
+</section>
+<section id="shape-precision-and-capacity">
+<h2>Shape, precision and capacity<a class="headerlink" href="#shape-precision-and-capacity" title="Link to this heading">#</a></h2>
+<p>T is 1–64 for admitted event paths. State, row geometry, index/weight tables,
+resident layers, tiling and output bounds all constrain fit. Parameter count
+alone is insufficient. <a class="reference internal" href="preflight.html"><span class="std std-doc">Preflight</span></a> reports known rejections,
+unknown inspection coverage and possible optimizations; suggestions are never
+applied silently. A compiler acceptance applies to the supplied example and
+target. Read <a class="reference internal" href="scaling.html"><span class="std std-doc">hardware-scale guidance</span></a> for memory interpretation.</p>
+</section>
+<section id="installation-and-validation-scope">
+<h2>Installation and validation scope<a class="headerlink" href="#installation-and-validation-scope" title="Link to this heading">#</a></h2>
+<p>Python 3.10+ and PyTorch are needed for authoring/compiler work. NumPy-only
+execution of an exported package is supported on a compatible board SDK.
+Application encoding and C host execution require the matching native extension.
+Installed-wheel CI covers Python 3.10/3.12 CPU combinations for its selected
+examples; it does not certify every OS, PyTorch version or hardware setup.</p>
+<p><a class="reference internal" href="results.html"><span class="std std-doc">Performance</span></a> records measured model/input scopes. CPU, mock,
+simulation, route and physical board evidence are distinct. The included image
+uses functional inference with an invalid hardware observer; electrical energy
+and full-dataset FPGA accuracy retain separate qualification requirements.
+See <a class="reference internal" href="compatibility.html"><span class="std std-doc">compatibility</span></a>, <a class="reference internal" href="recovery.html"><span class="std std-doc">runtime recovery</span></a>,
+<a class="reference internal" href="deploy.html"><span class="std std-doc">application bundles</span></a> and <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/RELEASE_V1.md">release gates</a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="compatibility.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Choose a compatible deployment</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="deploy.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Deploy an event application</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#native-event-layers">Native event layers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-c-host-operations">Explicit C host operations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-operations-run">Where operations run</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#shape-precision-and-capacity">Shape, precision and capacity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-and-validation-scope">Installation and validation scope</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

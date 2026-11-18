@@ -1,0 +1,740 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Training and deployment at the selected hardware scale &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'scaling';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Memory, traffic, latency and energy estimates" href="cost.html" />
+    <link rel="prev" title="SNN training and C/PL deployment" href="execution.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="training.html">Train, inspect and deploy with PyTorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preflight.html">Check a model before training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Model recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="residuals.html">Residual addition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Prepare data for recipe training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Read a training log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">SNN training and C/PL deployment</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Training and deployment at the selected hardware scale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cost.html">Memory, traffic, latency and energy estimates</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="training-guide.html" class="nav-link">Training</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Training and deployment at the selected hardware scale</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="training-and-deployment-at-the-selected-hardware-scale">
+<h1>Training and deployment at the selected hardware scale<a class="headerlink" href="#training-and-deployment-at-the-selected-hardware-scale" title="Link to this heading">#</a></h1>
+<p>Run <code class="docutils literal notranslate"><span class="pre">preflight</span></code> with the intended input before the first compile or epoch.
+For native Sequential backbones, static shape/budget inspection does not execute
+or copy the model. Model-provided graph metadata and the explicit merge +
+CountReadout dialect use isolated copies; capture can materialize the compiler
+and consume additional device memory. CPU RNG is restored. CUDA RNG and
+arbitrary external Python side effects are outside that guarantee.
+For a temporal image model, supply the real <code class="docutils literal notranslate"><span class="pre">B,T,C,H,W</span></code> geometry rather than
+one frame. Persist the returned JSON and the selected target with the run.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+
+<span class="c1"># backbone and probe are the caller&#39;s model and representative BTCHW tensor.</span>
+<span class="n">bitstream</span> <span class="o">=</span> <span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">preflight</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="n">probe</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="n">bitstream</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">&quot;preflight.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">spikepress.model_preflight.v1</span></code> gains an additive <code class="docutils literal notranslate"><span class="pre">hardware_budget</span></code> field.
+<code class="docutils literal notranslate"><span class="pre">REJECT</span></code> identifies an explicit unsupported contract; <code class="docutils literal notranslate"><span class="pre">WARN</span></code> identifies risks
+or conditional work. Inspect <code class="docutils literal notranslate"><span class="pre">unknowns</span></code> and <code class="docutils literal notranslate"><span class="pre">shape_coverage</span></code> even if no rejection
+is present. <code class="docutils literal notranslate"><span class="pre">COMPLETE</span></code> means every inventoried convolution has a static output
+shape estimate. It does not establish graph placement, mapped FPGA resources,
+quantized occupancy, or deployment. Unknown convolution geometry is listed in
+<code class="docutils literal notranslate"><span class="pre">unestimated_nodes</span></code> and makes coverage <code class="docutils literal notranslate"><span class="pre">PARTIAL</span></code>; later shapes are never guessed
+past unsupported operators. Compilation remains authoritative.</p>
+<p>The report reads the existing target definitions. It lists row count, dense
+OC8 entry upper bound, full-state vectors, target limits and conditional options.
+For the compact target, stage state is limited to 8192 vectors, with four
+physical stages and up to six logical contexts per stage. These are compiler
+limits, not a statement that a bitstream meets timing.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Reported option</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Required next check</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Spatial tiling</p></td>
+<td><p>Reuse the existing compiler’s exact tiling path</p></td>
+<td><p>Compile the unchanged model; check repager, tiles, context and stage allocation</p></td>
+</tr>
+<tr class="row-odd"><td><p>Structured channel pruning</p></td>
+<td><p>Change dependent layer widths and weights</p></td>
+<td><p>Explicit rewrite, fine-tuning/accuracy check, then compile</p></td>
+</tr>
+<tr class="row-even"><td><p>OC8 group pruning</p></td>
+<td><p>Reduce live weight entries using existing calibration/masks</p></td>
+<td><p>Calibrate representative training data, apply explicit masks, fine-tune, inspect actual packed occupancy</p></td>
+</tr>
+<tr class="row-odd"><td><p>Operator substitution</p></td>
+<td><p>Change an unsupported operator to a supported model design</p></td>
+<td><p>Retrain and requalify accuracy/numerics before compile</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>An entry upper bound is not measured sparsity. Entry pruning cannot repair row
+address or spatial-state overflow. If even one OC8 group exceeds full-state
+capacity, channel pruning alone cannot fit it. No option silently edits the
+model or guarantees that the compiler will admit it.</p>
+<p><code class="docutils literal notranslate"><span class="pre">spikepress.collect_oc8_statistics(model,</span> <span class="pre">loader,</span> <span class="pre">maximum_batches=...)</span></code> accepts
+binary BCHW and BTCHW events. Temporal calibration counts all <code class="docutils literal notranslate"><span class="pre">B*T*H*W</span></code>
+observations per channel and agrees with flattened-frame calibration. Use
+training/calibration data under the experiment protocol, without opening a
+holdout to choose masks. Existing <code class="docutils literal notranslate"><span class="pre">sparsify</span></code> and <code class="docutils literal notranslate"><span class="pre">apply_oc8_sparsity</span></code> remain the
+mask/application path; collecting statistics does not modify weights.</p>
+<section id="explicit-compact-export">
+<h2>Explicit compact export<a class="headerlink" href="#explicit-compact-export" title="Link to this heading">#</a></h2>
+<p>For an already hardware-aligned native model, the public path supports the
+existing compact target explicitly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+<span class="n">backbone</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">backbone</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="n">prepared</span><span class="p">,</span> <span class="n">preparation</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="n">probe</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="n">bitstream</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">prepared</span><span class="p">,</span> <span class="n">probe</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="n">bitstream</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="s2">&quot;backbone-compact.spm&quot;</span><span class="p">)</span>
+<span class="n">package</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Preparation reports compiler compatibility as <code class="docutils literal notranslate"><span class="pre">NOT_RUN</span></code> in this example; use
+<code class="docutils literal notranslate"><span class="pre">compiled.rejection_report</span></code> for the result of the one explicit compile.</p>
+<p>The default <code class="docutils literal notranslate"><span class="pre">pynq-z2</span></code> target stays unchanged. Existing public-v1 artifacts keep
+their format and validator. Compact save/load dispatches to the existing
+compact validator using the declared target; it does not convert, relabel or
+reseal a package. Target/schema/source-identity mismatches are rejected before
+creating the file. Existing destination files are protected by default.
+Ordinary compact virtual-segment bridging remains unsupported.</p>
+<p>To transition an existing public-v1 export, recompile the original supported
+model/checkpoint with the explicit compact target, compare integer golden and
+readout outputs, and save a new artifact. Editing the old manifest is invalid.
+Runtime loading selects the compact runner, but successful mock input preparation
+does not prove transport, RTL execution, board timing or hardware inference.</p>
+</section>
+<section id="multi-step-training-cost">
+<h2>Multi-step training cost<a class="headerlink" href="#multi-step-training-cost" title="Link to this heading">#</a></h2>
+<p>The existing implementation already batches convolution over <code class="docutils literal notranslate"><span class="pre">B*T</span></code>. Its
+optional CUDA <code class="docutils literal notranslate"><span class="pre">compile_multistep</span></code> path remains available. Saturation-sensitive
+integer accumulation retains its canonical fallback; reset, decay, surrogate
+gradients and temporal state must keep their existing order.</p>
+<p>An opt-in optimization skips unused activity telemetry:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Only when this layer&#39;s activity metrics/regularizers/hooks are unused.</span>
+<span class="n">event_layer</span><span class="o">.</span><span class="n">collect_activity</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>The default is <code class="docutils literal notranslate"><span class="pre">True</span></code>, including legacy instances without that attribute.
+With collection disabled, final membrane fields remain available, and telemetry
+contains <code class="docutils literal notranslate"><span class="pre">activity_collected=False</span></code>. Entropy, extra work convolution and other
+activity statistics are omitted. The sparse-event regularizer rejects missing
+activity explicitly. Keep collection enabled for training that uses work/tap
+regularization, activity metrics, model selection or telemetry hooks. Agent3’s
+native training caller uses these metrics and keeps the default.</p>
+<p>Regression checks cover exact outputs, input/weight/threshold/decay gradients,
+SGD update, masks/grouped/parametrized weights, integer export and actual
+saturating fallback. This flag changes telemetry cost; it does not change the
+logical batch, microbatch accumulation, optimizer or training protocol.</p>
+</section>
+<section id="fixed-cpu-evidence">
+<h2>Fixed CPU evidence<a class="headerlink" href="#fixed-cpu-evidence" title="Link to this heading">#</a></h2>
+<p>Evidence is under <code class="docutils literal notranslate"><span class="pre">build/agent2-sw-framework/a2-w007-hw-scale/</span></code>. Issue #15 owns
+live coordination; this document describes the software behavior and evidence
+boundaries, without mirroring peer progress.</p>
+<p>The unchanged trained <code class="docutils literal notranslate"><span class="pre">lif_dvs</span></code> checkpoint has SHA256
+<code class="docutils literal notranslate"><span class="pre">8354d9096c3ce35bd48aa4626f9cde3b776ab81de9e64ff129d0bba7d7b32c6e</span></code>:
+T16, binary 2x128x128, five width16 Conv/Pool blocks and a separate PS float
+head. Its compact package has ten lowered layers in three stages with state
+8192/8192/3360. The early report warns that the first layer’s un-tiled full
+state needs 32768 vectors, and offers the existing tiling path. Successful
+compilation demonstrates why a warning is not an unconditional rejection.</p>
+<p>The compiler now skips exhaustive P25 segmentation when an individual layer’s
+full state already exceeds stage capacity, then uses the existing P26 spatial
+fallback. Layers at or below capacity retain P25. For this real checkpoint,
+schedule calls fall from 139 to 29. One ordered shared-host cProfile trial
+measured 87.682s before and 80.376s after; this is not a stable throughput claim.
+Canonical package JSON is byte-identical (SHA256
+<code class="docutils literal notranslate"><span class="pre">fa652db9f64e3f35902fe19b457e00e492a20f06e7814b664883e29e47bffcbd</span></code>)
+and all 2449 golden spikes match. Public save/load and mock runtime preparation
+produce the same 66626 input words. The saved artifact SHA256 is
+<code class="docutils literal notranslate"><span class="pre">0a7eb5afd6eae0bb1e0feaa0d6f0ff72a16339cf7605f2e0691c7e00c01f633c</span></code>.</p>
+<p>Agent3’s native entrypoint writes <code class="docutils literal notranslate"><span class="pre">hardware-preflight.json</span></code> and its stderr
+diagnostic before the first authoritative compile. The hook keeps the existing
+<code class="docutils literal notranslate"><span class="pre">pynq-z2</span></code> target and binds <code class="docutils literal notranslate"><span class="pre">preflight.py</span></code> in run provenance. Its source SHA256 is
+<code class="docutils literal notranslate"><span class="pre">cdd27d6868c4d23fa20728ef27e6b2296edfc9c446e8434dadfd31741dad23a5</span></code>;
+the paired report-v3 SHA256 is
+<code class="docutils literal notranslate"><span class="pre">58d19a9fcf64a2c026341a02d1ae8508e28174bdb033dd3df50a40ebb0200fa2</span></code>.
+Producer and independent consumer each pass three tiny CPU checks covering
+report-before-compile rejection, model/mode/RNG preservation and exact
+forward/gradient/AdamW state/INT4-code behavior. The entrypoint is Agent3-owned;
+these exact source bytes are copied in <code class="docutils literal notranslate"><span class="pre">peer-hook-consumption-r2/source/</span></code> for
+review, rather than overwriting this checkout’s older examples.</p>
+<p>The independent compact intake verifies Agent3’s 177 source files and 11 model
+assets, copies its repaired export and acceptance/result/thermal receipts, and
+checks artifact bytes, package and golden against Agent2’s independent result.
+<code class="docutils literal notranslate"><span class="pre">peer-compact-consumption/</span></code> and <code class="docutils literal notranslate"><span class="pre">peer-compact-runtime/</span></code> bind that handoff to
+current load/mock-input behavior. No costly model compile was repeated solely
+to join metadata or acknowledge unchanged bytes.</p>
+<p>For one CPU layer, forward+backward at two threads and BTCHW <code class="docutils literal notranslate"><span class="pre">[2,8,8,32,32]</span></code>,
+12 alternating pairs measured median 6.459ms with activity versus 5.552ms
+without (about 14% less time). Raw paired samples, environment and benchmark
+source are retained in <code class="docutils literal notranslate"><span class="pre">training-worker/</span></code>. This does not measure GPU or
+whole-model training speed. No training campaign, board run, release build,
+FPGA throughput, mapped timing or electrical-energy result was produced.</p>
+</section>
+<section id="compiler-optimization-of-pl-execution">
+<h2>Compiler optimization of PL execution<a class="headerlink" href="#compiler-optimization-of-pl-execution" title="Link to this heading">#</a></h2>
+<p>The implementation sequence is legal schedule selection, source-bound activity
+calibration, weight layout alignment, tile geometry, then model-changing
+structured pruning. Static validation specialization is a separate joint
+compiler/runtime/RTL task. Issue #15 owns progress and peer decisions; the
+following gates define the work, not an assertion that every optimization is
+implemented or qualified on hardware.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Workstream</p></th>
+<th class="head"><p>Existing path and proposed change</p></th>
+<th class="head"><p>Acceptance and stop condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Legal schedule selection</p></td>
+<td><p>Extend the P26 planner’s ranking of already validated candidates; first minimize physical passes, then ordinary cut-stream word bounds, then stage count. Reuse P25 residency DP.</p></td>
+<td><p>Same model/numerics, no extra passes, reduced cut bound on a reproducible fixture; unchanged tile replay and passing package, golden and runtime checks. Stop on state/residual/readout mismatch or no cost improvement.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Activity-aware ranking</p></td>
+<td><p>Reuse the cost-model calibration and admission patterns with a compact/P25/P26-specific calibration, graph/source hashes and fixed representative inputs. Keep worst-case capacity checks.</p></td>
+<td><p>Validate estimates against held-out calibration inputs from the approved calibration pool and source-matched PL cycles. Preserve the static fallback for missing/out-of-range calibration. Do not reuse temporal4 coefficients for an unqualified target or choose plans using official test data.</p></td>
+</tr>
+<tr class="row-even"><td><p>Regular weight alignment</p></td>
+<td><p>Investigate naturally aligned legal stage partitions first. A padding policy requires an explicitly versioned producer/loader contract.</p></td>
+<td><p>Exact CSR, parameter order, thresholds, outputs and capacity including padding; old-layout packages retain their original admission. Reject unbound gaps, ambiguous revisions and malformed tails. Require Agent1 agreement and source-matched loader/fast-path proof before adoption.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tile/halo reuse</p></td>
+<td><p>Reuse P26’s explicit row bands within current 2–4-tile, power-of-two row-count and state-capacity constraints.</p></td>
+<td><p>Every output row covered exactly once, halo and state/spikes exact at every timestep, legal first/last and publication lifetime. Stop if a proposed band needs validator relaxation, more passes without a justified benefit, or unsupported tile count.</p></td>
+</tr>
+<tr class="row-even"><td><p>Structured pruning/substitution</p></td>
+<td><p>Reuse training-calibrated OC8 statistics/masks; change widths only through an explicit model rewrite that updates all consumers, concat/residual paths and the PS head.</p></td>
+<td><p>Demonstrate reduced actual packed work/state, fine-tune and evaluate under Agent3’s frozen accuracy protocol, then export/compile/golden again. Stop if only CSR sparsity improves while the deployed dense block remains unchanged, or accuracy/support gates fail. No automatic operator replacement.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Static validation specialization</p></td>
+<td><p>Reuse existing static admission/certificates; connect the checked bytes to the actual DMA buffers, publication generation, ownership and last read.</p></td>
+<td><p>Producer and runtime must agree on an immutable-byte/lifetime proof and fault/CLEAR recovery. Keep dynamic bounds, ownership, fault, drain and backpressure guards. A deepcopy or digest alone is insufficient; no additional guard removal is justified without this proof.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>P26 schedule ranking uses a worst-case <strong>logical stream-word bound</strong>, not a
+cycle model. The tile geometry is fixed for a graph and is not changed by this
+ranking. Arena allocation size includes padding and reserved capacity; it must
+not be presented as bytes actually transferred. Any cost that does not vary
+between candidates must not be counted as a new reduction. A change in stage
+boundaries can alter image loading or execution overhead even with the same
+pass count; source-matched RTL measurements are required to establish a speedup.</p>
+<p>The current tile planner rounds resident rows down to a power of two because
+the P26 validator requires power-of-two row counts, and the RTL loader uses the
+first band’s shift to check state capacity. Replacing this with the raw maximum
+row count is not a legal optimization under the current contract. Eight tiles
+also require joined count/index, descriptor RAM, input-table and lifetime
+changes; increasing a Python limit cannot establish support. Splitting a
+non-power-of-two tail into additional legal tiles may improve admission but is
+not, by itself, a performance optimization.</p>
+<p>Generic GPX1 weight payloads use dense blocks even when their source CSR omits
+zero groups. The existing exact diagonal layout is already specialized.
+Unstructured or OC8 mask pruning therefore does not guarantee fewer PL issues
+or reads. Channel permutation also needs consistent adjacent weights, neuron
+parameters, state and readout indexing; mixed-sign saturation prohibits an
+unproved change in accumulation order. Empty input rows or timesteps do not
+authorize skipping decay, threshold, reset or completion behavior.</p>
+<section id="compatibility-and-measurement">
+<h3>Compatibility and measurement<a class="headerlink" href="#compatibility-and-measurement" title="Link to this heading">#</a></h3>
+<p>No new compile option is needed for the legal schedule ranking: normal
+<code class="docutils literal notranslate"><span class="pre">spikepress.compile(...)</span></code> uses it when the P26 fallback applies, including an
+explicit compact target. Explicit stage groups remain a caller constraint.
+Existing saved packages retain their original schedule and validator; loading
+does not optimize or rewrite them. Recompilation may produce different stage
+boundaries and package hashes. Save the new package separately and qualify
+those exact bytes before replacing a deployed artifact. Reverting the compiler
+or loading the retained old package restores the old schedule.</p>
+<p>For each comparison, bind checkpoint/export, input transform and IDs, target,
+compiler/package, golden, RTL/filelist and runtime revisions. First compare
+complete integer outputs and per-timestep state where available; keep PS float
+head tolerances separately declared. Then compare physical pass count, actual
+intermediate word traffic, replay words and whole-frame PL cycles. Report
+host/input/head costs separately and use routed clock measurements for device
+throughput. A static bound, host replay, mock runtime or one healthy simulated
+input does not establish board performance, whole-set accuracy or energy.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="execution.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">SNN training and C/PL deployment</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="cost.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Memory, traffic, latency and energy estimates</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-compact-export">Explicit compact export</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-step-training-cost">Multi-step training cost</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fixed-cpu-evidence">Fixed CPU evidence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compiler-optimization-of-pl-execution">Compiler optimization of PL execution</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compatibility-and-measurement">Compatibility and measurement</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

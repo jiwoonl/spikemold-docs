@@ -1,0 +1,962 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Parameter reference &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=cdd23728"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/parameters';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Preparation, compilation and artifacts" href="compile.html" />
+    <link rel="prev" title="Python API" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Parameter reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compile.html">Preparation, compilation and artifacts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nn.html">spikepress.nn</a></li>
+<li class="toctree-l1"><a class="reference internal" href="training.html">Training and reporting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="runtime.html">Board runtime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readout.html">Readouts and application bundles</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Python API</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Parameter reference</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="parameter-reference">
+<h1>Parameter reference<a class="headerlink" href="#parameter-reference" title="Link to this heading">#</a></h1>
+<p>This page summarizes the public controls used in the <a class="reference internal" href="../pytorch.html"><span class="std std-doc">PyTorch guide</span></a>, <a class="reference internal" href="compile.html"><span class="std std-doc">compilation API</span></a>, and <a class="reference internal" href="runtime.html"><span class="std std-doc">board runtime</span></a>. Constructor acceptance does not guarantee that a model fits a target: use <a class="reference internal" href="../preflight.html"><span class="std std-doc">preflight</span></a>, <code class="docutils literal notranslate"><span class="pre">check</span></code>, and <code class="docutils literal notranslate"><span class="pre">compile</span></code>, and inspect their reports. Shapes use batch B, timesteps T, channels C, length L, height H, and width W. Dimensions and strides are counts, not physical time units.</p>
+<section id="native-layers">
+<h2>Native layers<a class="headerlink" href="#native-layers" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Conv1d</span></code>/<code class="docutils literal notranslate"><span class="pre">Conv2d</span></code> are reset-zero IF layers; <code class="docutils literal notranslate"><span class="pre">LIFConv1d</span></code>/<code class="docutils literal notranslate"><span class="pre">LIFConv2d</span></code> add retention. Their canonical names are <code class="docutils literal notranslate"><span class="pre">EventConvIF1d</span></code>/<code class="docutils literal notranslate"><span class="pre">EventConvIF2d</span></code> and <code class="docutils literal notranslate"><span class="pre">EventConvLIF1d</span></code>/<code class="docutils literal notranslate"><span class="pre">EventConvLIF2d</span></code>. <code class="docutils literal notranslate"><span class="pre">IFLinear</span></code> and <code class="docutils literal notranslate"><span class="pre">LIFLinear</span></code> are the corresponding unit-spatial layers. Inputs are B,C,L or B,T,C,L for 1D; B,C,H,W or B,T,C,H,W for 2D. Linear supports B,T,C or B,C,1,1 or B,T,C,1,1. T must match the preset. State starts at zero on each forward call, persists across timesteps in that call, and resets to zero on a spike; independent calls do not carry state.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">in_channels</span></code>, <code class="docutils literal notranslate"><span class="pre">out_channels</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Positive input/output channel counts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">in_features</span></code>, <code class="docutils literal notranslate"><span class="pre">out_features</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Positive input/output feature counts for linear layers.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">groups</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Positive integer dividing both channel counts; selects grouped connectivity. Target-specific lowering may impose further limits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kernel_size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
+<td><p>Spatial kernel width (2D uses a square); only 1 or 3.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stride</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Positive spatial step. Supported deployment geometry is target-dependent.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">padding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code> (2D), <code class="docutils literal notranslate"><span class="pre">None</span></code> (1D)</p></td>
+<td><p>Nonnegative spatial padding. In 1D, <code class="docutils literal notranslate"><span class="pre">None</span></code> selects 0 for K1 and 1 for K3; supported K/S/P triples are 1/1/0, 3/1/1, and 3/2/1.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">initial_threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Positive finite floating-point starting value per output channel; <code class="docutils literal notranslate"><span class="pre">None</span></code> uses the preset’s value (normally 0.155). It initializes a learnable shadow parameter, not an INT16 code.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">preset</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SparseEventTrainingPreset</span></code>; <code class="docutils literal notranslate"><span class="pre">None</span></code> constructs its defaults. Native layer construction requires its INT4 integer-aligned setting.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">decay</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> for LIF convolutions; required for <code class="docutils literal notranslate"><span class="pre">LIFLinear</span></code></p></td>
+<td><p>Finite retention beta in (0, 1], or <code class="docutils literal notranslate"><span class="pre">&quot;learnable&quot;</span></code>. It multiplies the previous state, so 1 means IF/no leak. Convolutions require <code class="docutils literal notranslate"><span class="pre">decay</span></code> or <code class="docutils literal notranslate"><span class="pre">decay_shift</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">decay_shift</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Exact integer 0–4; beta = 2^(-shift). If both numeric <code class="docutils literal notranslate"><span class="pre">decay</span></code> and shift are given they must agree. With <code class="docutils literal notranslate"><span class="pre">decay=&quot;learnable&quot;</span></code>, it sets the initial code (default 2).</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Fixed beta need not be exactly representable during authoring, but must be lowered for deployment. The shift codebook is 1, 1/2, 1/4, 1/8, 1/16; shift 0 is IF. Learnable decay uses a projected shift during forward and is frozen by preparation. Export computes each threshold code as <code class="docutils literal notranslate"><span class="pre">clip(ceil(max(shadow,</span> <span class="pre">1/256)</span> <span class="pre">/</span> <span class="pre">weight_scale),</span> <span class="pre">1,</span> <span class="pre">32767)</span></code> in INT16. Preparation requires finite positive shadow thresholds; choosing a shadow value does not directly choose that integer code.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MaxPool1d</span></code> and <code class="docutils literal notranslate"><span class="pre">MaxPool2d</span></code> (canonical <code class="docutils literal notranslate"><span class="pre">EventMaxPool1d</span></code> and <code class="docutils literal notranslate"><span class="pre">EventMaxPool2d</span></code>) accept <code class="docutils literal notranslate"><span class="pre">kernel_size=2</span></code>, <code class="docutils literal notranslate"><span class="pre">stride=2</span></code>, <code class="docutils literal notranslate"><span class="pre">padding=0</span></code>; each is a spatial count. The allowed K/S/P triples are 2/2/0, 3/1/1 and 3/2/1. 1D deployment lowering of K2/S2 requires an even input length. Their inputs use the corresponding 1D or 2D layouts above.</p>
+<p><code class="docutils literal notranslate"><span class="pre">Threshold</span></code> is the <code class="docutils literal notranslate"><span class="pre">EventIF</span></code> alias: <code class="docutils literal notranslate"><span class="pre">channels</span></code> is required and positive, and <code class="docutils literal notranslate"><span class="pre">threshold=1</span></code> is an integer threshold in [1, 32767], replicated over channels. It compares BC or BCHW current and produces the input dtype’s 0/1 values. This is a T=1 helper, not the learnable per-channel threshold above.</p>
+<section id="training-preset-and-recurrence-controls">
+<h3>Training preset and recurrence controls<a class="headerlink" href="#training-preset-and-recurrence-controls" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">SparseEventTrainingPreset</span></code> field</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and allowed values</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;hw_if_uniform_sparse&quot;</span></code></p></td>
+<td><p>Nonempty descriptive name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timesteps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Integer T in [1, 64], number of steps per forward window. <code class="docutils literal notranslate"><span class="pre">prepare</span></code> binds it on a copied model from the example.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">weight_bits</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p>4, 8, or 32; only 4 is integer-aligned/deployable for native construction and export.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">state_bits</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">16</span></code></p></td>
+<td><p>Must be 16, the signed state width in bits.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">decay</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+<td><p>Must be 1.0 in the preset; LIF retention is a separate layer parameter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reset_mode</span></code>, <code class="docutils literal notranslate"><span class="pre">bias</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;zero&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Fixed reset-to-zero and no-bias contract.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">surrogate_slope</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">25.0</span></code></p></td>
+<td><p>Positive finite surrogate-gradient slope.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">initial_threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.155</span></code></p></td>
+<td><p>Positive finite initial shadow threshold, overridden by a layer’s value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">schema</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;spikepress.sparse_event_training_preset.v3&quot;</span></code></p></td>
+<td><p>Must equal this schema identifier.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The layer properties <code class="docutils literal notranslate"><span class="pre">compile_multistep=False</span></code> and <code class="docutils literal notranslate"><span class="pre">native_multistep=False</span></code> opt into optional training recurrence paths; <code class="docutils literal notranslate"><span class="pre">collect_activity=True</span></code> controls activity telemetry used by regularizers. Set them to booleans on the layer; inspect <code class="docutils literal notranslate"><span class="pre">execution_report</span></code> for the path actually used. These are execution choices, not guarantees of speed or hardware deployment.</p>
+</section>
+</section>
+<section id="preparation-and-compilation">
+<h2>Preparation and compilation<a class="headerlink" href="#preparation-and-compilation" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">preflight(model,</span> <span class="pre">example=None,</span> <span class="pre">*,</span> <span class="pre">target=&quot;pynq-z2&quot;,</span> <span class="pre">bitstream=None)</span></code> reports early compatibility warnings; <code class="docutils literal notranslate"><span class="pre">example</span></code> is an optional representative tensor for shape/count capture. <code class="docutils literal notranslate"><span class="pre">prepare(model,</span> <span class="pre">example,</span> <span class="pre">...)</span></code> requires a PyTorch model and example, makes an independent copy, and returns it with a report. Set <code class="docutils literal notranslate"><span class="pre">model.eval()</span></code> for deployment; preparation preserves mode and does not update an optimizer attached to the original. Normally the example is B,T,C,L or B,T,C,H,W with T in [1,64]. <code class="docutils literal notranslate"><span class="pre">check(model,</span> <span class="pre">example_input,</span> <span class="pre">...)</span></code> reports compatibility, while <code class="docutils literal notranslate"><span class="pre">compile(model,</span> <span class="pre">example_input,</span> <span class="pre">...)</span></code> performs exact admission and returns a path-dependent compiler result. Use representative fixed shapes; native event boundaries require binary events. Compilation does not itself program a board.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;pynq-z2&quot;</span></code></p></td>
+<td><p>Target/profile name. Public default uses the release target; explicit profile support and capacity depend on the operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bitstream</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Path to a bitstream used to resolve a verified profile; choose a matching target and package.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">validate</span></code> (<code class="docutils literal notranslate"><span class="pre">prepare</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Boolean. <code class="docutils literal notranslate"><span class="pre">False</span></code> skips compiler compatibility and count capture; compile still must succeed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model_id</span></code> (<code class="docutils literal notranslate"><span class="pre">compile</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Optional model identifier for the compiled artifact.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">policy</span></code> (<code class="docutils literal notranslate"><span class="pre">compile</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;compatible&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;compatible&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;efficient&quot;</span></code> placement policy; inspect the resulting report.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">result_mode</span></code> (<code class="docutils literal notranslate"><span class="pre">compile</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;events&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;events&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;channel_count&quot;</span></code>; supported result modes depend on target/path.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="advanced-preparation-and-compatibility">
+<h3>Advanced preparation and compatibility<a class="headerlink" href="#advanced-preparation-and-compatibility" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">prepare</span></code> uses <code class="docutils literal notranslate"><span class="pre">policy=None</span></code> by default. <code class="docutils literal notranslate"><span class="pre">policy=&quot;strict&quot;</span></code> requires exact decay; <code class="docutils literal notranslate"><span class="pre">policy=&quot;adapt&quot;</span></code> projects to the nearest shift in log2 space and requires a finite nonnegative <code class="docutils literal notranslate"><span class="pre">max_decay_error</span></code> absolute tolerance on beta. <code class="docutils literal notranslate"><span class="pre">max_decay_error</span></code> is invalid with strict policy. Adaptation also rejects a beta below 1 if its nearest shift is 0 (IF), even within tolerance. The explicit IF-conversion route uses the legacy preparation options <code class="docutils literal notranslate"><span class="pre">decay_quantization=&quot;nearest_log2&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">max_decay_abs_error=...</span></code>, <code class="docutils literal notranslate"><span class="pre">allow_if_conversion=True</span></code>; it cannot be combined with <code class="docutils literal notranslate"><span class="pre">policy</span></code>. Do not combine either policy with the legacy controls below. Review the returned per-layer decay report: adaptation changes retention and may require retraining or validation.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and conflicts</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">decay_quantization</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;exact&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;nearest_log2&quot;</span></code>; the latter explicitly projects to the shift codebook.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_decay_abs_error</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Required finite nonnegative absolute beta error bound with <code class="docutils literal notranslate"><span class="pre">nearest_log2</span></code>; forbidden with <code class="docutils literal notranslate"><span class="pre">exact</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">allow_if_conversion</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Boolean; permits a beta below 1 to project to shift 0 (IF).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temporal_stage_groups</span></code> (<code class="docutils literal notranslate"><span class="pre">compile</span></code>)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Optional 1–4 <code class="docutils literal notranslate"><span class="pre">(first,</span> <span class="pre">last)</span></code> groups: zero-based, inclusive, ordered, contiguous and nonempty; together they cover every logical layer and must meet the selected per-stage limit. Omit for automatic placement. Rejected on ambiguous virtual/flatten cuts.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For the public target, <code class="docutils literal notranslate"><span class="pre">compile</span></code> requires exact decay and rejects the legacy adaptation options; adapt with <code class="docutils literal notranslate"><span class="pre">prepare</span></code> first. <code class="docutils literal notranslate"><span class="pre">prepare</span></code> does not silently change trained weights or thresholds.</p>
+</section>
+<section id="optional-host-operations">
+<h3>Optional host operations<a class="headerlink" href="#optional-host-operations" title="Link to this heading">#</a></h3>
+<p>The following options are shared by <code class="docutils literal notranslate"><span class="pre">prepare</span></code>, <code class="docutils literal notranslate"><span class="pre">check</span></code>, and <code class="docutils literal notranslate"><span class="pre">compile</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">allow_host_ops</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Explicitly permits supported C host operations and PL islands. Hybrid compilation requires exact event semantics, <code class="docutils literal notranslate"><span class="pre">result_mode=&quot;events&quot;</span></code>, and automatic grouping; decay adaptation and explicit groups conflict.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">host_precision</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>With host ops, <code class="docutils literal notranslate"><span class="pre">&quot;float32&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;float64&quot;</span></code>; inferred as float64 for a float64 example, otherwise float32. Explicit selection is needed for mixed source precision. Host precision does not alter the PL INT4/INT16 numeric grid.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">input_domain</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>With host ops, <code class="docutils literal notranslate"><span class="pre">&quot;binary&quot;</span></code> or the selected host precision string. Inferred as binary for bool examples or direct native ingress, otherwise host precision. Binary means 0/1 inputs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_workspace_bytes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">67108864</span></code></p></td>
+<td><p>Hybrid peak live-tensor + parameter + INT8 scratch budget in bytes, integer 1 through 67,108,864. Excludes JSON, PL images, DMA and separately bounded kernel scratch; not total process/board memory.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">host_precision</span></code> and <code class="docutils literal notranslate"><span class="pre">input_domain</span></code> require <code class="docutils literal notranslate"><span class="pre">allow_host_ops=True</span></code>. The hybrid path expects a fixed-shape float32, float64 or bool example and an eval-mode model. Actual supported operators and boundaries remain subject to compiler admission.</p>
+</section>
+<section id="weight-storage">
+<h3>Weight storage<a class="headerlink" href="#weight-storage" title="Link to this heading">#</a></h3>
+<p>Native <code class="docutils literal notranslate"><span class="pre">IFLinear</span></code>/<code class="docutils literal notranslate"><span class="pre">LIFLinear</span></code> reuse a 1x1 convolution and store weights as
+<code class="docutils literal notranslate"><span class="pre">[out_features,in_features,1,1]</span></code>, not the two-dimensional storage of
+<code class="docutils literal notranslate"><span class="pre">torch.nn.Linear</span></code>. Preserve this shape in checkpoints or explicit assignment.
+Matching shapes alone does not qualify a pretrained float model’s conversion.</p>
+</section>
+</section>
+<section id="runtime-and-artifacts">
+<h2>Runtime and artifacts<a class="headerlink" href="#runtime-and-artifacts" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">load(path)</span></code> reads and validates a saved <code class="docutils literal notranslate"><span class="pre">.spm</span></code> artifact; <code class="docutils literal notranslate"><span class="pre">path</span></code> is required. It returns an artifact/program, not the original training model. <code class="docutils literal notranslate"><span class="pre">board.load(compiled)</span></code> accepts a compatible compiled object or artifact path and invalidates prepared input handles. See <a class="reference internal" href="runtime.html"><span class="std std-doc">runtime</span></a> and <a class="reference internal" href="../compatibility.html"><span class="std std-doc">compatibility</span></a>.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">connect</span></code> parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;pynq-z2&quot;</span></code></p></td>
+<td><p>Public target or a supported explicit compatibility profile.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bitstream</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Bitstream path; otherwise <code class="docutils literal notranslate"><span class="pre">SPIKEPRESS_BITSTREAM</span></code> or profile default is used. Profile and loaded artifact must match.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">program</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Explicitly request programming the image when true. Supplying a bitstream path alone does not program it; CLI <code class="docutils literal notranslate"><span class="pre">--program</span></code> is likewise an explicit action.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">transport</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Optional existing transport; cannot be combined with <code class="docutils literal notranslate"><span class="pre">bitstream</span></code> or <code class="docutils literal notranslate"><span class="pre">program=True</span></code>. Configure its wait policy on the transport itself.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">native_library</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Optional diagnostic native library path; normally discovered automatically (explicit use is deprecated).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">input_slot_count</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Must be 1; release batch runner manages slots.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">wait_policy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;latency&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;latency&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;balanced&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;interrupt&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;auto&quot;</span></code>; affects waiting behavior, not a speed or energy guarantee. A supplied transport requires the default here.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">session_cookie_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Reserved; no currently accepted public connection policy permits a non-None path.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmeasured_inference</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Boolean. The included image requires <code class="docutils literal notranslate"><span class="pre">True</span></code> for inference-only observation; other targets reject <code class="docutils literal notranslate"><span class="pre">True</span></code>. This does not establish measured energy.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">board.prepare_input(value)</span></code> takes an unprepared input tensor for the loaded model and snapshots it for repeated runs. Handles belong to that board and loaded model; reload, close, or fault invalidates them. Some virtual and hybrid programs do not support this facility. <code class="docutils literal notranslate"><span class="pre">board.run(value,</span> <span class="pre">*,</span> <span class="pre">window_tag=None,</span> <span class="pre">readout=None)</span></code> accepts a compatible input or owned prepared handle. <code class="docutils literal notranslate"><span class="pre">window_tag</span></code> is an optional integer in [0, 65535]; <code class="docutils literal notranslate"><span class="pre">None</span></code> auto-increments with wraparound. <code class="docutils literal notranslate"><span class="pre">readout</span></code> is an optional supported native classifier readout; hybrid programs carry their own explicit readout and reject it. Supported batches return multiple results; consult the <a class="reference internal" href="runtime.html"><span class="std std-doc">runtime API</span></a> for streaming and batch methods.</p>
+</section>
+<section id="residual-add-export">
+<h2>Residual ADD export<a class="headerlink" href="#residual-add-export" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">compile_residual_add(model,</span> <span class="pre">example_input,</span> <span class="pre">*,</span> <span class="pre">target=&quot;pynq-z2&quot;,</span> <span class="pre">bitstream=None)</span></code>
+accepts the explicit integer temporal ADD graph described in
+<a class="reference internal" href="../residuals.html"><span class="std std-doc">residual addition</span></a>. <code class="docutils literal notranslate"><span class="pre">model</span></code> must be in eval mode and its
+weights/thresholds must satisfy that graph’s integer contract. <code class="docutils literal notranslate"><span class="pre">example_input</span></code>
+is one binary B,T,C,H,W window. <code class="docutils literal notranslate"><span class="pre">target</span></code> retains the existing default;
+<code class="docutils literal notranslate"><span class="pre">bitstream</span></code> selects its verified image profile and rejects conflicting metadata.
+It does not convert an arbitrary training model or program an FPGA.</p>
+</section>
+<section id="input-and-terminal-helpers">
+<h2>Input and terminal helpers<a class="headerlink" href="#input-and-terminal-helpers" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">EventReadout()</span></code> has no constructor parameters; its <code class="docutils literal notranslate"><span class="pre">inputs</span></code> must be a BCHW or BTCHW tensor, returned unchanged. <code class="docutils literal notranslate"><span class="pre">pack_event_features(inputs)</span></code> accepts BCHW and returns contiguous B,C×H×W,1,1 in row-major order; it does not infer or add a timestep. See <a class="reference internal" href="../inputs.html"><span class="std std-doc">input layouts</span></a> and <a class="reference internal" href="nn.html"><span class="std std-doc">native layers</span></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">DirectCurrentIF</span></code> and <code class="docutils literal notranslate"><span class="pre">DirectCurrentLIF</span></code> are reference primitives for fixed-scale current input; direct-current input is <strong>not enabled on the included deployment image</strong>. Their <code class="docutils literal notranslate"><span class="pre">inputs</span></code> are finite floating-point BCHW or BTCHW, with positive dimensions and matching C. BCHW is repeated for T steps; BTCHW must have the configured T. Each call starts with zero state, uses integer-equivalent current quantization and reset-zero spikes, and returns B,T,C,H,W. Quantization that would saturate INT16 is rejected.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">channels</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Positive integer input channel count.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timesteps</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Integer T in [1, 64], steps per forward window.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scale</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Positive finite current units per integer code; current is divided by scale and rounded half away from zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p>Integer threshold code in [1, 32767], shared initially across channels.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">decay_shift</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code> (IF), <code class="docutils literal notranslate"><span class="pre">None</span></code> (LIF)</p></td>
+<td><p>Exact integer 0–4 with retention 2^(-shift); IF requires 0. LIF requires this or <code class="docutils literal notranslate"><span class="pre">decay</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">decay</span></code> (LIF)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Exact retention in {1, 1/2, 1/4, 1/8, 1/16}; if supplied with <code class="docutils literal notranslate"><span class="pre">decay_shift</span></code>, they must agree.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="training-progress">
+<h2>Training progress<a class="headerlink" href="#training-progress" title="Link to this heading">#</a></h2>
+<p><a class="reference internal" href="../reports.html"><span class="std std-doc">Training reports</span></a> explain log interpretation and limits. <code class="docutils literal notranslate"><span class="pre">TrainingMonitor</span></code> is opt-in and reports caller-supplied values; it does not compute training statistics or prove completion.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Call and parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">TrainingMonitor(every=...)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">50</span></code></p></td>
+<td><p>Positive integer step interval. The first observed step of each epoch and the final step are also emitted.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stream</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Writable text stream for progress; <code class="docutils literal notranslate"><span class="pre">None</span></code> selects standard error.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">log_path</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Optional new JSONL file path; an existing file is rejected. Close the monitor or use it as a context manager.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">update(epoch,</span> <span class="pre">step,</span> <span class="pre">total_steps=None,</span> <span class="pre">**metrics)</span></code></p></td>
+<td><p>required <code class="docutils literal notranslate"><span class="pre">epoch</span></code>, <code class="docutils literal notranslate"><span class="pre">step</span></code></p></td>
+<td><p>Nonnegative integer epoch and step; optional positive integer <code class="docutils literal notranslate"><span class="pre">total_steps</span></code> must be at least step. Named metrics must be finite numeric scalars when emitted; skipped steps do not inspect metrics. Returns whether it emitted a snapshot.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">summary(*,</span> <span class="pre">epoch,</span> <span class="pre">**metrics)</span></code></p></td>
+<td><p>required <code class="docutils literal notranslate"><span class="pre">epoch</span></code></p></td>
+<td><p>Nonnegative integer epoch and caller-computed finite scalar metrics; no averaging is performed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phase(name)</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Nonempty string naming a context-managed host interval; records completion/failure and wall seconds without synchronizing devices. Overlapping intervals are not additive.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">report_hardware(report,</span> <span class="pre">*,</span> <span class="pre">compilation=None)</span></code></p></td>
+<td><p>required <code class="docutils literal notranslate"><span class="pre">report</span></code></p></td>
+<td><p>Existing preflight report and optional compilation report for formatting/recording; this does not compile or execute hardware.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">summarize_training_log(path)</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Path to a JSONL log. Limits are 16 MiB per file and 1 MiB per line; invalid or incomplete records raise an error. Last entries are by file order and completion remains unknown.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="host-readout">
+<h2>Host readout<a class="headerlink" href="#host-readout" title="Link to this heading">#</a></h2>
+<p>The functions below consume <code class="docutils literal notranslate"><span class="pre">output</span></code>, a sequence of terminal spike records or a result mapping. The caller supplies model metadata, including silent channels; see <a class="reference internal" href="../readout.html"><span class="std std-doc">host classification</span></a>. A channel-count result has no temporal records, so <code class="docutils literal notranslate"><span class="pre">first_spike</span></code> rejects it. The other supported reductions follow the count payload’s own denominator where applicable.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Call and parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spike_count(output,</span> <span class="pre">*,</span> <span class="pre">channels,</span> <span class="pre">timesteps)</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Per-channel count over the window. For record reduction, <code class="docutils literal notranslate"><span class="pre">channels</span></code> is 1–1024 and <code class="docutils literal notranslate"><span class="pre">timesteps</span></code> is 1–64.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spike_rate(output,</span> <span class="pre">*,</span> <span class="pre">channels,</span> <span class="pre">timesteps)</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Per-channel count divided by T for records; a channel-count payload uses its declared denominator. This need not be a spatial mean.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">first_spike(output,</span> <span class="pre">*,</span> <span class="pre">channels,</span> <span class="pre">timesteps)</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Earliest timestep per channel, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if silent; record path has the same bounds above.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">population_count(output,</span> <span class="pre">*,</span> <span class="pre">classes,</span> <span class="pre">timesteps)</span></code></p></td>
+<td><p>required</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">classes</span></code> maps each channel to a nonnegative integer class index; counts are summed by index. For record reduction, each index must be below the number of channels.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">global_average(output,</span> <span class="pre">*,</span> <span class="pre">timesteps,</span> <span class="pre">output_shape_hwc,</span> <span class="pre">state_base,</span> <span class="pre">state_limit)</span></code></p></td>
+<td><p>required</p></td>
+<td><p>Time/spatial mean per channel. <code class="docutils literal notranslate"><span class="pre">output_shape_hwc</span></code> is (H,W,C); <code class="docutils literal notranslate"><span class="pre">state_base</span></code> and <code class="docutils literal notranslate"><span class="pre">state_limit</span></code> are the terminal layer’s declared state address bounds.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">linear(output,</span> <span class="pre">weight,</span> <span class="pre">bias=None,</span> <span class="pre">*,</span> <span class="pre">timesteps,</span> <span class="pre">output_shape_hwc,</span> <span class="pre">state_base,</span> <span class="pre">state_limit)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bias=None</span></code></p></td>
+<td><p>Applies a host linear head to the preceding mean. <code class="docutils literal notranslate"><span class="pre">weight</span></code> is finite numeric [classes,C], <code class="docutils literal notranslate"><span class="pre">bias</span></code> is absent or finite [classes].</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Classifier(head)</span></code> owns a float64 copy of the finite numeric arrays in its required mapping. Its <code class="docutils literal notranslate"><span class="pre">weight</span></code> is [classes,features], <code class="docutils literal notranslate"><span class="pre">bias</span></code> is [classes], and <code class="docutils literal notranslate"><span class="pre">mode</span></code> defaults to <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>; supported modes are <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;count&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;temporal&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;flatten&quot;</span></code>. Temporal mode requires <code class="docutils literal notranslate"><span class="pre">temporal_weights</span></code> of length T, nonnegative and summing approximately to one. Flatten mode accepts <code class="docutils literal notranslate"><span class="pre">time_bins=1</span></code> and optional <code class="docutils literal notranslate"><span class="pre">grid</span></code> (default: full output H,W); positive bin/grid sizes cannot exceed the corresponding output dimensions. Feature width must match the selected reduction and output geometry. Temporal and flatten modes reject channel-count results. Pass the classifier to a compatible <code class="docutils literal notranslate"><span class="pre">board.run(...,</span> <span class="pre">readout=classifier)</span></code>; this head runs on the host.</p>
+</section>
+<section id="event-applications">
+<h2>Event applications<a class="headerlink" href="#event-applications" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">encode_events(events,</span> <span class="pre">preprocessing,</span> <span class="pre">*,</span> <span class="pre">native_library=None)</span></code> converts raw events to binary uint8 [1,T,C,H,W] using the C extension, with no Python numerical fallback. <code class="docutils literal notranslate"><span class="pre">events</span></code> is numeric [N,4] in <code class="docutils literal notranslate"><span class="pre">[time,y,x,channel]</span></code> order; coordinates must be finite, integer-valued and in bounds, and timestamps must lie in the declared window. Integers must be exactly representable in float64. Duplicate events in a bin combine by OR; the encoder does not crop or silently discard events. <code class="docutils literal notranslate"><span class="pre">native_library=None</span></code> discovers the installed extension; an explicit path selects a library. See <a class="reference internal" href="../inputs.html"><span class="std std-doc">input encoding</span></a>.</p>
+<p>The required <code class="docutils literal notranslate"><span class="pre">preprocessing</span></code> mapping has exactly these keys:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">encoding</span></code></p></td>
+<td><p>Must be <code class="docutils literal notranslate"><span class="pre">&quot;uniform_binary_or&quot;</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">window_start</span></code>, <code class="docutils literal notranslate"><span class="pre">window_end</span></code></p></td>
+<td><p>Finite scalar endpoints in the caller’s common timestamp unit, with start &lt; end; bins cover the half-open interval [start,end). Integer endpoints must be within ±2^53.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">timesteps</span></code></p></td>
+<td><p>Integer T in [1,64]; uniform time bins.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">shape_hwc</span></code></p></td>
+<td><p>Three positive integers [H,W,C]; output is limited to 64 MiB. For application export it and T must match the artifact.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">export_deployment(artifact,</span> <span class="pre">destination,</span> <span class="pre">*,</span> <span class="pre">head_weight,</span> <span class="pre">head_bias,</span> <span class="pre">labels,</span> <span class="pre">preprocessing,</span> <span class="pre">reduction=&quot;mean&quot;,</span> <span class="pre">time_bins=None,</span> <span class="pre">grid=None,</span> <span class="pre">temporal_weights=None)</span></code> writes a new application directory. <code class="docutils literal notranslate"><span class="pre">artifact</span></code> is an existing compatible <code class="docutils literal notranslate"><span class="pre">.spm</span></code> path and <code class="docutils literal notranslate"><span class="pre">destination</span></code> must not exist. Application export supports binary event packages under its admitted contract, not direct-current input or count-mode output. <code class="docutils literal notranslate"><span class="pre">head_weight</span></code> is a finite numeric [classes,features] matrix, <code class="docutils literal notranslate"><span class="pre">head_bias</span></code> a finite [classes] vector, and <code class="docutils literal notranslate"><span class="pre">labels</span></code> a list or tuple of distinct nonempty strings, one per class. The head is stored as float64. <code class="docutils literal notranslate"><span class="pre">preprocessing</span></code> is the mapping above and must match the artifact input.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Reduction option</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning and constraints</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reduction</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;count&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;temporal&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;flatten&quot;</span></code>; see <a class="reference internal" href="../deploy.html"><span class="std std-doc">deployment</span></a> for the exact feature definitions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">time_bins</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Required for flatten: integer 1–T. Must be omitted for other modes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">grid</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Required for flatten: [height,width] positive integers no larger than terminal H,W. Must be omitted for other modes. Flatten feature width is time_bins×C×grid height×grid width; other modes use C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temporal_weights</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Required for temporal: finite nonnegative length-T vector whose sum differs from 1 by at most 1e-5. Must be omitted for other modes.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Deployment(directory,</span> <span class="pre">*,</span> <span class="pre">native_library=None)</span></code> validates application assets at the required directory path; the optional library path selects the C extension. <code class="docutils literal notranslate"><span class="pre">app.encode(events)</span></code> uses the bound preprocessing. <code class="docutils literal notranslate"><span class="pre">app.load(board)</span></code> explicitly loads this application on a <code class="docutils literal notranslate"><span class="pre">Board</span></code>; reloading a different model invalidates the binding. <code class="docutils literal notranslate"><span class="pre">app.run(board,</span> <span class="pre">events,</span> <span class="pre">*,</span> <span class="pre">window_tag=None,</span> <span class="pre">postprocess=None,</span> <span class="pre">top_k=None)</span></code> encodes raw events and runs on that loaded board. <code class="docutils literal notranslate"><span class="pre">app.classify(words,</span> <span class="pre">*,</span> <span class="pre">window_tag,</span> <span class="pre">postprocess=None,</span> <span class="pre">top_k=None)</span></code> instead validates a complete raw result frame; <code class="docutils literal notranslate"><span class="pre">words</span></code> are raw frame words, not a <code class="docutils literal notranslate"><span class="pre">Board.run</span></code> result mapping, and <code class="docutils literal notranslate"><span class="pre">window_tag</span></code> is required. The run tag defaults to the Board’s automatic tag; explicit tags are uint16. <code class="docutils literal notranslate"><span class="pre">postprocess</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;softmax&quot;</span></code>; <code class="docutils literal notranslate"><span class="pre">top_k</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> or an integer from 1 through the class count. Top-k scores use probabilities when softmax is requested and logits otherwise. These options require C host kernels. <code class="docutils literal notranslate"><span class="pre">app.report()</span></code> takes no arguments and describes the bound application; its hardware qualification remains <code class="docutils literal notranslate"><span class="pre">NOT_CHECKED</span></code>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Python API</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="compile.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Preparation, compilation and artifacts</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#native-layers">Native layers</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#training-preset-and-recurrence-controls">Training preset and recurrence controls</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preparation-and-compilation">Preparation and compilation</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-preparation-and-compatibility">Advanced preparation and compatibility</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optional-host-operations">Optional host operations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weight-storage">Weight storage</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runtime-and-artifacts">Runtime and artifacts</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#residual-add-export">Residual ADD export</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#input-and-terminal-helpers">Input and terminal helpers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-progress">Training progress</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#host-readout">Host readout</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#event-applications">Event applications</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

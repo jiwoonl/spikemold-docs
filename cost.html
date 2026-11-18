@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Memory, traffic, latency and energy estimates &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'cost';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Deployment" href="deployment-guide.html" />
+    <link rel="prev" title="Training and deployment at the selected hardware scale" href="scaling.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="training.html">Train, inspect and deploy with PyTorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preflight.html">Check a model before training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Model recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="residuals.html">Residual addition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Prepare data for recipe training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Read a training log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">SNN training and C/PL deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scaling.html">Training and deployment at the selected hardware scale</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Memory, traffic, latency and energy estimates</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="training-guide.html" class="nav-link">Training</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Memory, traffic, latency and energy estimates</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="memory-traffic-latency-and-energy-estimates">
+<h1>Memory, traffic, latency and energy estimates<a class="headerlink" href="#memory-traffic-latency-and-energy-estimates" title="Link to this heading">#</a></h1>
+<p>Cost reports have three distinct evidence levels: static bounds, simulation
+for specified inputs, and measurements from a bound board/model configuration.
+A model’s parameter count alone cannot predict its FPGA latency or energy.</p>
+<section id="try-inspection-on-cpu">
+<h2>Try inspection on CPU<a class="headerlink" href="#try-inspection-on-cpu" title="Link to this heading">#</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/compile_model.py<span class="w"> </span>--output<span class="w"> </span>/tmp/spikepress-cost-new
+spikepress<span class="w"> </span>inspect<span class="w"> </span>/tmp/spikepress-cost-new/model.spm
+python<span class="w"> </span>-m<span class="w"> </span>json.tool<span class="w"> </span>/tmp/spikepress-cost-new/preflight.json
+</pre></div>
+</div>
+<p>This synthetic example produces an accepted package and host golden for one
+input. The inspection is a static report; it does not measure latency, total
+traffic or energy. The <code class="docutils literal notranslate"><span class="pre">.spm</span></code> and <code class="docutils literal notranslate"><span class="pre">events.npy</span></code> are saved in that directory.
+Use a fresh output path for each run. To select a qualified image’s compiler
+profile, append <code class="docutils literal notranslate"><span class="pre">--bitstream</span> <span class="pre">bitstreams/pynq-z2/spikemold.bit</span></code> with matching HWH and
+sidecar available on the workstation.</p>
+</section>
+<section id="before-training-memory-pressure">
+<h2>Before training: memory pressure<a class="headerlink" href="#before-training-memory-pressure" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">preflight</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;pynq-z2&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">spikepress</span><span class="o">.</span><span class="n">format_preflight</span><span class="p">(</span><span class="n">report</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Each inspected layer exposes <code class="docutils literal notranslate"><span class="pre">full_state_bytes</span></code> for an untiled window and
+<code class="docutils literal notranslate"><span class="pre">dense_weight_payload_upper_bound_bytes</span></code> when the target uses INT16 state and
+INT4 weights. These use the existing target dtype and OC8 layout:</p>
+<ul class="simple">
+<li><p>State bytes = output spatial positions × padded OC8 groups × 8 × 2.</p></li>
+<li><p>Dense weight payload upper bound = rows × padded OC8 groups × 8 / 2.</p></li>
+</ul>
+<p>State persists over T; its storage is not multiplied by T. These figures are
+per-layer logical storage. They omit index tables, temporal metadata, physical
+BRAM padding, residual lifetimes, DMA arenas and host buffers. Summing them does
+not give peak deployed memory or training GPU memory. Tiling changes peak
+resident storage and traffic; actual quantized sparsity can reduce weight
+payload. Training memory additionally depends on saved autograd tensors,
+optimizer state, dtype and batch size and must be profiled on the chosen device.</p>
+<p>Specialized legacy parameter exporters have their own cost reports and fixed
+model geometry. Their array sizes do not describe a general compiled model;
+see the developer <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/legacy-parameter-export.md">legacy exporter reference</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">spikepress</span> <span class="pre">inspect</span> <span class="pre">model.spm</span></code> displays the validated artifact hash, input
+contract, encoded execution plan, image boundaries and available memory
+allocation bounds. It does not measure traffic, latency or energy, or verify
+the attached board.</p>
+</section>
+<section id="after-compile-input-dependent-simulation">
+<h2>After compile: input-dependent simulation<a class="headerlink" href="#after-compile-input-dependent-simulation" title="Link to this heading">#</a></h2>
+<p>Use the existing compiler result for the selected backend:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SparseEventCompileResult.simulate_communication(events)</span></code> provides static
+communication bounds and stage-simulated traffic. The counts use 32-bit
+words; multiply a specific category by 4 for bytes. Input, model-image,
+stage-cut write/read and result categories have different meanings; do not
+add overlapping totals.</p></li>
+<li><p>Temporal results such as the training-workflow example support
+<code class="docutils literal notranslate"><span class="pre">compile_input(events)</span></code>, returning the encoded input <code class="docutils literal notranslate"><span class="pre">row_stream</span></code> and a CPU
+golden result. Its <code class="docutils literal notranslate"><span class="pre">stream_words.nbytes</span></code> is the encoded input size only,
+not total DDR traffic. This is not a full hardware schedule simulation.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TargetSpec.estimate(graph,</span> <span class="pre">activity,</span> <span class="pre">cycle_coefficients=...)</span></code> reuses the
+temporal cost model. Cycles require compatible graph, target, timing mode,
+workload range and held-out error evidence. Missing or incompatible
+calibration is unknown. This estimator’s accepted graph/contract is not
+interchangeable with every public compiled package.</p></li>
+</ul>
+<p>Keep the package/source/input hashes with each result. A logical graph’s
+spike count and a hypothetical cut length do not prove actual DMA traffic,
+physical BRAM accesses or board speed. The current framework has scoped
+estimators; it does not yet expose a calibrated universal FPGA simulator.</p>
+</section>
+<section id="measured-j-input-and-j-input-spike">
+<h2>Measured J/input and J/input-spike<a class="headerlink" href="#measured-j-input-and-j-input-spike" title="Link to this heading">#</a></h2>
+<p>The existing model-bound measurement tools verify raw captures and their manifests:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>spikepress<span class="w"> </span>measure-report<span class="w"> </span>--package<span class="w"> </span>QUALIFIED_PACKAGE_DIR<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--runs<span class="w"> </span>CAPTURE_SESSION_1<span class="w"> </span>CAPTURE_SESSION_2<span class="w"> </span>--output<span class="w"> </span>new-measurement.json
+spikepress<span class="w"> </span>fit-energy<span class="w"> </span>--package<span class="w"> </span>QUALIFIED_PACKAGE_DIR<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--training<span class="w"> </span>CAPTURE_SESSION_1<span class="w"> </span>--validation<span class="w"> </span>CAPTURE_SESSION_2<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>new-energy-model.json
+</pre></div>
+</div>
+<p>These commands analyze existing data; they do not operate a board. A generic
+<code class="docutils literal notranslate"><span class="pre">.spm</span></code> file is not a qualified measurement directory. Fit requires separate
+new-input development sessions with 216 windows, subject holdout and matching
+image/model bindings.
+Output paths must be new. Keep fit diagnostics including held-out error and
+the constant-mean baseline; accepting a fit is not evidence that it is useful.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Quantity</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Whole-board compute J/input</p></td>
+<td><p>Sum of compute-window energy / inference windows</p></td>
+</tr>
+<tr class="row-odd"><td><p>Whole-board end-to-end J/input</p></td>
+<td><p>Batch measurement energy / inference windows</p></td>
+</tr>
+<tr class="row-even"><td><p>Compute J/input-spike</p></td>
+<td><p>Sum of compute-window energy / sum of input spikes</p></td>
+</tr>
+<tr class="row-odd"><td><p>End-to-end J/input-spike</p></td>
+<td><p>Batch measurement energy / sum of input spikes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>One input means one inference window, not one timestep or one batch. Input
+spikes and internal/output spikes are distinct denominators. Use a ratio of
+sums across a dataset, not the mean of per-input ratios. Zero total spikes
+produce <code class="docutils literal notranslate"><span class="pre">None</span></code>; the baseline energy may still be positive. Whole-board energy
+divided by spikes is not the intrinsic energy of a single spike or memory access.</p>
+</section>
+<section id="estimate-a-compatible-input-from-a-fitted-model">
+<h2>Estimate a compatible input from a fitted model<a class="headerlink" href="#estimate-a-compatible-input-from-a-fitted-model" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.energy</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_energy</span>
+
+<span class="n">calibration</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;qualified-energy-model.json&quot;</span><span class="p">))</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">predict_energy</span><span class="p">(</span>
+    <span class="n">calibration</span><span class="p">,</span>
+    <span class="n">binding</span><span class="o">=</span><span class="n">verified_run_binding</span><span class="p">,</span>  <span class="c1"># Independently verified current bit/model/evidence.</span>
+    <span class="n">effective_ac</span><span class="o">=</span><span class="n">logical_trace</span><span class="p">[</span><span class="s2">&quot;effective_ac&quot;</span><span class="p">],</span>
+    <span class="n">input_spikes</span><span class="o">=</span><span class="n">logical_trace</span><span class="p">[</span><span class="s2">&quot;input_spikes&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use activity from the same input trace. Do not copy <code class="docutils literal notranslate"><span class="pre">calibration[&quot;binding&quot;]</span></code>
+into a different model’s request to bypass compatibility. The existing
+predictor is experimental and applies only to the same calibrated reference model and
+calibrated activity range. It exposes <code class="docutils literal notranslate"><span class="pre">board_compute_j_per_input</span></code> and
+<code class="docutils literal notranslate"><span class="pre">board_compute_j_per_input_spike</span></code>, while retaining <code class="docutils literal notranslate"><span class="pre">energy_j</span></code>. Missing/zero
+spike count leaves the spike-normalized field <code class="docutils literal notranslate"><span class="pre">None</span></code>. An incompatible model,
+invalid calibration or activity outside the fitted range returns <code class="docutils literal notranslate"><span class="pre">UNKNOWN_*</span></code>
+with null energy. Static preflight always labels energy and latency unknown.
+Synthetic coefficients test units and rejection behavior; they do not establish
+measured energy or a validated speed prediction.</p>
+</section>
+<section id="gates-for-broader-simulation">
+<h2>Gates for broader simulation<a class="headerlink" href="#gates-for-broader-simulation" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Bind compiler/package, input activity, exact RTL/bitstream, clock and host
+transfer policy. Retain the measured hardware traffic/cycle evidence, selected model and
+representative input activity together with the compiler/runtime revision.</p></li>
+<li><p>Validate memory lifetime/arena sizes and simulated event/traffic counts on
+the same input bytes. STOP if a package route lacks that evidence.</p></li>
+<li><p>Fit compute, end-to-end and idle energy separately from qualified existing
+sessions. Report validation error and comparison against a simple constant
+baseline. STOP on poor fit, incompatible binding or extrapolation.</p></li>
+<li><p>Show estimate, units, denominator, calibration reference and uncertainty
+together. Keep unknown fields visible. Cross-model estimates require
+held-out model validation; new boards/clock/memory policies require new
+qualification. Do not use unqualified coefficients for automatic
+latency or energy optimization.</p></li>
+</ol>
+<p>The current compiler optimization plan is in <a class="reference internal" href="scaling.html"><span class="std std-doc">HW-scale workflow</span></a>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="scaling.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Training and deployment at the selected hardware scale</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="deployment-guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Deployment</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#try-inspection-on-cpu">Try inspection on CPU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#before-training-memory-pressure">Before training: memory pressure</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#after-compile-input-dependent-simulation">After compile: input-dependent simulation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#measured-j-input-and-j-input-spike">Measured J/input and J/input-spike</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estimate-a-compatible-input-from-a-fitted-model">Estimate a compatible input from a fitted model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gates-for-broader-simulation">Gates for broader simulation</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

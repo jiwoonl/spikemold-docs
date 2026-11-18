@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Model recipes &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'models';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Residual addition" href="residuals.html" />
+    <link rel="prev" title="Check a model before training" href="preflight.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="training.html">Train, inspect and deploy with PyTorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preflight.html">Check a model before training</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Model recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="residuals.html">Residual addition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Prepare data for recipe training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Read a training log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="execution.html">SNN training and C/PL deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scaling.html">Training and deployment at the selected hardware scale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cost.html">Memory, traffic, latency and energy estimates</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="training-guide.html" class="nav-link">Training</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Model recipes</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="model-recipes">
+<h1>Model recipes<a class="headerlink" href="#model-recipes" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">examples/model_recipes.py</span></code> provides bias-free DVS SCNN, depthwise MobileNet,
+feedforward speech CNN, and OR residual training examples. They are small native
+SpikePress designs, not reproductions of published architectures or accuracy.
+Use <code class="docutils literal notranslate"><span class="pre">HybridClassifier</span></code> for a host Linear head: its input is the mean spike rate
+over time and space, matching <code class="docutils literal notranslate"><span class="pre">spikepress.readout.linear</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--recipe</span> <span class="pre">vgg</span> <span class="pre">--stem-stride</span> <span class="pre">1</span></code> adds a CIFAR-10 VGG-family candidate with
+eight dense K3 convolutions, repeats 1/1/2/2/2, and five binary max pools.
+Its default five widths are 64/64/64/64/64, selected for the current physical
+CSR banks. It reuses the two-stage trainer, CIFAR encoding, native shift-LIF
+and explicit PS classifier. It is an adapted VGG convolution topology without
+BN/bias, not a published-model accuracy reproduction. The frozen performance
+run and accuracy-gated terminal QAT are in
+<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/288b94fef008ad5d92acbbb4e8054c7794a8c106/experiments/cifar10-vgg/PLAN.md">the CIFAR VGG plan</a>. Passing compilation
+does not establish its task accuracy.</p>
+<p>The eight-block <code class="docutils literal notranslate"><span class="pre">or_resnet</span></code> recipe is trainable but exceeds the current target’s
+one-residual-merge contract and is rejected by compilation. <code class="docutils literal notranslate"><span class="pre">OrBackbone(preset,</span> <span class="pre">blocks=1)</span></code> is the separately qualified deployment smoke. Do not train the larger
+recipe expecting its whole graph to deploy on the current bitstream.</p>
+<p>Depthwise K3/P1 at S1 or S2 is qualified for C64, C128, C256, C512 and C1024. The wider
+cases require exact depthwise connectivity: input channels, output channels and
+groups must be equal. Other grouped shapes retain their previous restrictions.
+C1024 passed production control-v12 XSim at T=1 and T=64 for both strides,
+including the last OC8 group. Normal state, row, CSR and image capacity checks
+still apply; this is not permission for arbitrary spatial sizes or grouping.</p>
+<p>Compilation of a recipe smoke and integer-golden equality do not establish
+trained task accuracy. A terminal host classifier requires a separate backbone
+artifact and caller-owned head weights. Include the host head in end-to-end
+latency and energy measurements.</p>
+<p>Learnable decay uses <code class="docutils literal notranslate"><span class="pre">LIFConv2d(...,</span> <span class="pre">decay=&quot;learnable&quot;)</span></code> (also Linear/Conv1d).
+The training forward uses the hardware shift codebook with a straight-through
+gradient. <code class="docutils literal notranslate"><span class="pre">spikepress.prepare()</span></code> freezes the trained code to an exact shift on a
+copy; the source training model remains learnable. This adds no RTL decay path.</p>
+<section id="training-and-exporting">
+<h2>Training and exporting<a class="headerlink" href="#training-and-exporting" title="Link to this heading">#</a></h2>
+<p>Start with the <a class="reference internal" href="datasets.html"><span class="std std-doc">prepared-data contract and bounded CPU pilot</span></a>. The commands below describe larger two-stage training runs, default to CUDA and require existing datasets; they are not quick-start commands.</p>
+<p><code class="docutils literal notranslate"><span class="pre">examples/train_recipes.py</span></code> uses the existing <code class="docutils literal notranslate"><span class="pre">examples/train/utils.py</span></code>
+two-stage engine through native model/dataset adapters. The engine selects the
+strict best validation-loss checkpoint, restores it before QAT, and starts a
+fresh AdamW optimizer. Each stage has its own learning rate, minimum/maximum
+epoch counts and early stopping patience. Native layers use float weight/state
+diagnostics in FP32 and the deployment INT4/INT16 grid in QAT; both use the same
+projected shift-codebook decay. These modes are recorded separately.</p>
+<p>Before training, three calibration passes use eight deterministic train-prefix
+samples without labels. Per-output positive pre-firing accumulator values set
+a 90th-percentile threshold, followed by gain 2. The first layer starts at
+learnable codebook shift 2. Calibration and learnable decay add no RTL.
+Compilation checks the backbone before and after training. The classifier is
+explicitly host-only, not a biased neural layer in the FPGA graph.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>fpga
+<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/train_recipes.py<span class="w"> </span>--recipe<span class="w"> </span>mobilenet<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data<span class="w"> </span>/path/to/prepared/cifar<span class="w"> </span>--output<span class="w"> </span>/path/to/new/run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--widths<span class="w"> </span><span class="m">16</span>,32,64,128<span class="w"> </span>--timesteps<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--fp32-epochs<span class="w"> </span><span class="m">60</span><span class="w"> </span>--qat-epochs<span class="w"> </span><span class="m">20</span><span class="w"> </span>--min-epochs<span class="w"> </span><span class="m">10</span><span class="w"> </span>--patience<span class="w"> </span><span class="m">8</span>
+<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/train_recipes.py<span class="w"> </span>--recipe<span class="w"> </span>dvs_scnn<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data<span class="w"> </span>/path/to/prepared/dvs<span class="w"> </span>--output<span class="w"> </span>/path/to/new/run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--widths<span class="w"> </span><span class="m">16</span>,32,64<span class="w"> </span>--stem-stride<span class="w"> </span><span class="m">1</span><span class="w"> </span>--timesteps<span class="w"> </span><span class="m">16</span>
+<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/train_recipes.py<span class="w"> </span>--recipe<span class="w"> </span>speech_cnn<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--data<span class="w"> </span>/path/to/prepared/shd<span class="w"> </span>--output<span class="w"> </span>/path/to/new/run<span class="w"> </span>--timesteps<span class="w"> </span><span class="m">64</span>
+</pre></div>
+</div>
+<p>The output includes FP32/QAT best checkpoints, <code class="docutils literal notranslate"><span class="pre">backbone.spm</span></code>, <code class="docutils literal notranslate"><span class="pre">checkpoint.pt</span></code>,
+<code class="docutils literal notranslate"><span class="pre">host_head.npz</span></code>, protocol/history and a first fixed validation sample with
+<code class="docutils literal notranslate"><span class="pre">input.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">golden.npy</span></code> and <code class="docutils literal notranslate"><span class="pre">host_logits.npy</span></code>. FP32-best, QAT-start and QAT-best
+validation metrics distinguish architecture/training from quantization loss.
+QAT export must match the compiler integer golden; a failure leaves a receipt
+and rejects the candidate. Export does not establish board execution.</p>
+<p>DVS uses prepared binary <code class="docutils literal notranslate"><span class="pre">[N,16,2,128,128]</span></code> recordings. T below 16 OR-bins
+non-overlapping intervals. T above 16 is rejected because these prepared frames
+cannot recover finer temporal resolution. CIFAR uses uint8 <code class="docutils literal notranslate"><span class="pre">[N,3,32,32]</span></code>,
+T-dependent deterministic level/phase coding and the existing training-only
+augmentation. NPZ files contain <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code> and unique disjoint split <code class="docutils literal notranslate"><span class="pre">ids</span></code>.
+The native trainer transfers raw uint8 image batches to the training device and
+performs level/phase encoding there in one tensor operation. This avoids
+sample-by-sample CPU encoding and transferring T expanded float frames. The
+existing seeded CPU augmentation is unchanged. Calibration and compilation
+still receive the same encoded tensors; CPU training uses the same batch encoder.
+Convolution already combines batch and timestep dimensions. Membrane, spike and
+reset recurrence remains sequential over time to preserve neuron semantics.
+<code class="docutils literal notranslate"><span class="pre">--compile-multistep</span></code> optionally fuses that CUDA recurrence with <code class="docutils literal notranslate"><span class="pre">torch.compile</span></code>.
+It preserves the timestep dependency; it does not treat timesteps as independent
+samples. INT4 updates use fusion only when the existing absolute bound proves
+that signed-16 saturation cannot occur. All other updates retain the canonical
+event-order saturation path. CPU compile/export and default training remain eager.
+Compilation has a startup cost and requires a working PyTorch CUDA compiler.
+Metrics accumulate on the training device and transfer once per epoch; finite
+loss and gradient guards remain active before optimizer updates.
+Speech uses <code class="docutils literal notranslate"><span class="pre">train_x.npy</span></code>/<code class="docutils literal notranslate"><span class="pre">validation_x.npy</span></code> and matching <code class="docutils literal notranslate"><span class="pre">*_meta.npz</span></code> with
+<code class="docutils literal notranslate"><span class="pre">labels</span></code> and <code class="docutils literal notranslate"><span class="pre">ids</span></code>. The input is <code class="docutils literal notranslate"><span class="pre">[N,1500,88]</span></code> little-bitorder packed SHD data;
+700 auditory units become one Conv1D spatial axis. OR time binning supports
+T=1..64; changing T changes preprocessing and must be reported. Prepared SHD
+subsets are not full-dataset benchmarks.</p>
+<p>Omitting <code class="docutils literal notranslate"><span class="pre">--train-samples</span></code>/<code class="docutils literal notranslate"><span class="pre">--val-samples</span></code> uses the whole prepared split.
+Limits select fixed prefixes. Official test sets stay unopened. Historical
+one-stage results remain reproducible with <code class="docutils literal notranslate"><span class="pre">--legacy-pilot</span> <span class="pre">--epochs</span> <span class="pre">10</span></code>.</p>
+<p>To continue an interrupted two-stage run, use <code class="docutils literal notranslate"><span class="pre">--resume-from</span> <span class="pre">/path/to/parent</span></code>
+with a new <code class="docutils literal notranslate"><span class="pre">--output</span></code> directory and the same model, data, seed, batch sizes and
+stage schedule. The trainer restores the epoch-boundary model and AdamW state,
+replays early-stopping history, and preserves best checkpoints. The parent is
+never overwritten. <code class="docutils literal notranslate"><span class="pre">resume.json</span></code> binds parent hashes and the current source;
+older checkpoints without RNG state are labelled accordingly. New checkpoints
+also save Python, NumPy and PyTorch RNG state. Runtime optimization choices are
+recorded separately from the model protocol.</p>
+<p><code class="docutils literal notranslate"><span class="pre">--head-mode</span> <span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">count</span></code>, <code class="docutils literal notranslate"><span class="pre">temporal</span></code> or <code class="docutils literal notranslate"><span class="pre">flatten</span></code> selects a host reduction. Temporal
+weights are a normalized learned per-timestep vector. <code class="docutils literal notranslate"><span class="pre">--work-coefficient</span></code> and
+<code class="docutils literal notranslate"><span class="pre">--tap-coefficient</span></code> enable the existing OC8-work and protected-output
+regularizer; both default to zero. Set <code class="docutils literal notranslate"><span class="pre">--work-ceiling</span></code> explicitly for an
+ablation. Its work counts are a compiler-aligned activity proxy, not measured
+energy. Normalize task accuracy first before choosing an efficiency penalty.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">flatten</span></code> head retains spatial positions after averaging time; it runs on
+the host, with a larger classifier/transfer cost than global pooling. Use
+<code class="docutils literal notranslate"><span class="pre">--fp32-only</span></code> to save selected float checkpoints without QAT or integer export.
+<code class="docutils literal notranslate"><span class="pre">--lr-schedule</span> <span class="pre">cosine</span></code> enables cosine LR decay with resumable scheduler state.
+See <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/history.md">training accuracy</a> for reference comparisons and the
+one-time terminal QAT workflow.</p>
+<p>Compile-only capacity screening is available before an expensive campaign:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/sweep_recipes.py<span class="w"> </span>--output<span class="w"> </span>new-capacity-report.json
+</pre></div>
+</div>
+<p>This checks widths, T and DVS stem stride. Rejected candidates retain their
+compiler reason; no synthetic accuracy, cycles or energy are added to the
+report. Runtime capacity checks still apply after training changes sparsity.</p>
+<p>Verify a saved two-stage export offline, then manually qualify the same bound
+assets when the board is available:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/qualify_model.py<span class="w"> </span>/path/to/run
+python<span class="w"> </span>examples/qualify_model.py<span class="w"> </span>/path/to/run<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--bitstream<span class="w"> </span>/path/to/spikemold.bit<span class="w"> </span>--program<span class="w"> </span>--windows<span class="w"> </span><span class="m">10</span><span class="w"> </span>--wait-policy<span class="w"> </span>auto
+</pre></div>
+</div>
+<p>The board command validates all saved asset hashes, compares FPGA terminal
+spikes and host classifier logits, and reports call latency. It never treats
+the offline check as FPGA proof and does not supply an energy measurement.
+<code class="docutils literal notranslate"><span class="pre">--program</span></code> is an explicit request to write the image. Historical one-stage
+runs retain <code class="docutils literal notranslate"><span class="pre">train_recipes.py</span> <span class="pre">--verify-existing</span></code> and their separate
+<code class="docutils literal notranslate"><span class="pre">validation-proof/</span></code> receipt.</p>
+<p>For a small supported residual model, <code class="docutils literal notranslate"><span class="pre">examples/train_features.py</span> <span class="pre">--feature</span> <span class="pre">residual</span></code> exports a three-convolution, one-OR-merge model. This is residual
+feature coverage, not deployed ResNet19. Multiple residual reuse and pre-spike
+ADD remain unsupported.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="preflight.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Check a model before training</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="residuals.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Residual addition</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-and-exporting">Training and exporting</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

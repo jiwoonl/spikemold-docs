@@ -1,0 +1,691 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SNN training and C/PL deployment &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'execution';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Training and deployment at the selected hardware scale" href="scaling.html" />
+    <link rel="prev" title="Read a training log" href="reports.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="training.html">Train, inspect and deploy with PyTorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preflight.html">Check a model before training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Model recipes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="residuals.html">Residual addition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">Prepare data for recipe training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reports.html">Read a training log</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">SNN training and C/PL deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scaling.html">Training and deployment at the selected hardware scale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cost.html">Memory, traffic, latency and energy estimates</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="training-guide.html" class="nav-link">Training</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">SNN training and C/PL deployment</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="snn-training-and-c-pl-deployment">
+<h1>SNN training and C/PL deployment<a class="headerlink" href="#snn-training-and-c-pl-deployment" title="Link to this heading">#</a></h1>
+<p>The scope centers on IF/LIF, convolution, linear, pooling and spike readout used in SpikingJelly and snnTorch, together with PyTorch Module/autograd workflows. The compiler checks each operator’s geometry, input domain, timestep, precision and target contract. Directly importing the model APIs of these libraries requires separate implementation.</p>
+<section id="runnable-cpu-examples">
+<h2>Runnable CPU examples<a class="headerlink" href="#runnable-cpu-examples" title="Link to this heading">#</a></h2>
+<p>A source checkout, compiler extra, and native extension installed with a C compiler and Python development headers are required. Choose new output paths.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--output<span class="w"> </span>/tmp/spikepress-hybrid-new
+python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--output<span class="w"> </span>/tmp/spikepress-hybrid-int8-new<span class="w"> </span>--int8
+</pre></div>
+</div>
+<p>Each command saves and reloads <code class="docutils literal notranslate"><span class="pre">snn_hybrid.spm</span></code> and compares it with PyTorch. <code class="docutils literal notranslate"><span class="pre">torch_match</span></code> is a CPU comparison for the specified input and <code class="docutils literal notranslate"><span class="pre">hardware:</span> <span class="pre">NOT_CHECKED</span></code>. INT8 is opt-in and task accuracy requires separate validation. Existing files are not overwritten. The example does not connect to an FPGA or train.</p>
+</section>
+<section id="cpu-multi-step-training">
+<h2>CPU multi-step training<a class="headerlink" href="#cpu-multi-step-training" title="Link to this heading">#</a></h2>
+<p>The existing SpikePress event layers can select CPU recurrence:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">layer</span><span class="o">.</span><span class="n">native_multistep</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">spikes</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">spikes</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">execution_report</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The installed native C extension is required. It supports first-order surrogate BPTT for float32/float64 and propagates gradients to threshold, input and learnable retention. Reset detach, floor STE and the unused decay gradient at T1 follow the existing path. Higher-order gradients raise an error. Integer training fuses recurrence only when the existing bound proves no saturation; otherwise it uses the existing ordered event-by-event path and records <code class="docutils literal notranslate"><span class="pre">saturation_bound</span></code> in <code class="docutils literal notranslate"><span class="pre">native_status</span></code>. CUDA input uses the existing path and records <code class="docutils literal notranslate"><span class="pre">cpu_required</span></code>.</p>
+<p>A single C loop replaces timestep-level Python calls while retaining temporal state dependence. Existing B×T convolution is reused. The single-thread CPU recurrence+loss+backward microbenchmark reports medians of 11 interleaved pairs after 3 warmups:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>BTCHW</p></th>
+<th class="head"><p>Existing Torch ms</p></th>
+<th class="head"><p>C ms</p></th>
+<th class="head"><p>Speed ratio</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1×4×8×4×4</p></td>
+<td><p>0.7677</p></td>
+<td><p>0.1959</p></td>
+<td><p>3.92×</p></td>
+</tr>
+<tr class="row-odd"><td><p>2×16×16×8×8</p></td>
+<td><p>3.0613</p></td>
+<td><p>0.7066</p></td>
+<td><p>4.33×</p></td>
+</tr>
+<tr class="row-even"><td><p>2×32×32×8×8</p></td>
+<td><p>6.7677</p></td>
+<td><p>2.3024</p></td>
+<td><p>2.94×</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Before timing, spikes and final state matched exactly and gradients matched at <code class="docutils literal notranslate"><span class="pre">rtol=atol=2e-4</span></code>. Convolution, GPU, ARM and whole-model throughput are not included. Source, environment and source/input hashes are in <code class="docutils literal notranslate"><span class="pre">build/agent2-sw-framework/a2-w031-operator-implementation/native-multistep-benchmark-final/results.json</span></code>.</p>
+</section>
+<section id="training-schedule-and-resumption">
+<h2>Training schedule and resumption<a class="headerlink" href="#training-schedule-and-resumption" title="Link to this heading">#</a></h2>
+<p>The native recipe entrypoint connects existing training-engine <code class="docutils literal notranslate"><span class="pre">fp32_patience_only</span></code> and <code class="docutils literal notranslate"><span class="pre">qat_patience_only</span></code>. Uncapped mode retains the requested minimum epochs; default capped mode retains existing epoch limits. A checkpoint whose previous adapter recorded a smaller minimum may be rejected when resuming with the changed schedule. Resume with the original source and recorded schedule, or start training in a new output. Active producer training follows its frozen source and schedule.</p>
+</section>
+<section id="explicit-c-host-regions">
+<h2>Explicit C host regions<a class="headerlink" href="#explicit-c-host-regions" title="Link to this heading">#</a></h2>
+<p>Default <code class="docutils literal notranslate"><span class="pre">compile()</span></code> uses the existing native contract. Set <code class="docutils literal notranslate"><span class="pre">allow_host_ops=True</span></code> to select C host regions. Ordinary float32 models run as f32 and float64 input models retain the f64 path.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prepared</span><span class="p">,</span> <span class="n">preparation</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example</span><span class="p">,</span>
+    <span class="n">allow_host_ops</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">program</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="n">prepared</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span>
+    <span class="n">allow_host_ops</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">program</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>
+<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+<span class="n">program</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">program</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>  <span class="c1"># host-only plan</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>  <span class="c1"># NumPy float32, or float64 for an f64 plan</span>
+</pre></div>
+</div>
+<p>PyTorch handles authoring, capture and training. Deployment numerical kernels run in C; Python handles fixed graph scheduling, metadata and NumPy buffer passing. With <code class="docutils literal notranslate"><span class="pre">host_precision</span></code> omitted, float32/bool source selects f32 and float64 selects f64. Automatic mode rejects mixed float32/float64 graphs. Explicit <code class="docutils literal notranslate"><span class="pre">host_precision=&quot;float32&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;float64&quot;</span></code> converts to that precision; validate task accuracy against the original after conversion. float16/bfloat16 and integer model capture are rejected; binary bool input and safe binary counts are supported.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Region</p></th>
+<th class="head"><p>Supported capture and execution</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Native spike</p></td>
+<td><p>Existing EventConvIF/LIF2d, 1d wrapper, IF/LIFLinear, EventMaxPool; reuses PL compiler/package/admission</p></td>
+</tr>
+<tr class="row-odd"><td><p>C synapse</p></td>
+<td><p>bias/group/dilation Conv2d, Linear, fixed eval BatchNorm2d channel affine</p></td>
+</tr>
+<tr class="row-even"><td><p>C pool/head</p></td>
+<td><p>MaxPool2d, AvgPool2d, AdaptiveAvgPool2d, sum/mean, softmax</p></td>
+</tr>
+<tr class="row-odd"><td><p>C bridge</p></td>
+<td><p>reshape/view/flatten, permute/transpose, fixed slice, concat, broadcast ADD/multiply, binary OR/AND</p></td>
+</tr>
+<tr class="row-even"><td><p>C neuron</p></td>
+<td><p>BCHW T1 EventIF threshold, DirectCurrentIF/LIF quantize/shift/hard-zero reset</p></td>
+</tr>
+<tr class="row-odd"><td><p>Auxiliary activation</p></td>
+<td><p>ReLU, sigmoid, tanh; arbitrary functional capture is rejected with the specific unsupported node</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Use a fixed-shape single-input/single-output eval graph. Explicit <code class="docutils literal notranslate"><span class="pre">input_domain=&quot;binary&quot;</span></code> checks 0/1 for every execution input. The default domain derives from direct native consumption or bool input; it does not infer binary from example values alone. In-place/out, mixed training mode, unsupported dtype, dynamic shape and unregistered operations are rejected.</p>
+<p>For hybrid graphs, <code class="docutils literal notranslate"><span class="pre">prepare()</span></code> observes each native layer’s actual ingress on an isolated copy to bind T. BCHW is T1; BTF/BTCHW and 1d wrapper BTCL use their layer’s time axis. Host-only graph report <code class="docutils literal notranslate"><span class="pre">timesteps</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>; per-layer T appears in <code class="docutils literal notranslate"><span class="pre">layers</span></code>.</p>
+</section>
+<section id="explicit-dynamic-int8">
+<h2>Explicit dynamic INT8<a class="headerlink" href="#explicit-dynamic-int8" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># program is a float32 hybrid plan.</span>
+<span class="n">compact</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">quantize_dynamic</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">compact</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>
+<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="s2">&quot;model-int8.spm&quot;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">compact</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns a new plan and changes the numerical representation of host Conv2d/Linear. Weights use symmetric INT8 per output channel; activations use symmetric INT8 per Linear row or Conv BT frame. The range is [-127,127], rounding is half away from zero, and zero point is 0. Scales are f32 and a zero tensor uses scale 1. Only fan-in safe for every INT32 accumulation partial sum is admitted. INT16 neuron state and PL INT4 weights/event-ordered saturation retain the existing contract.</p>
+<p>Output and bias are f32. Dequantization applies scale/bias with small double temporaries to avoid intermediate overflow and checks the f32 range before returning. Main operations are INT8 multiplication and INT32 accumulation. Results may differ from the original floating model. <code class="docutils literal notranslate"><span class="pre">quantized_accuracy=&quot;NOT_CHECKED&quot;</span></code> is reported; validate accuracy on representative data before deployment. Per-input dynamic scaling does not replace task accuracy validation.</p>
+<p>Weight payload is 1/4 of f32 plus per-channel scales and f32 bias. f32 buffers are 1/2 the size of f64. Input activations remain f32 and INT8 scratch is added, so total peak memory depends on weights and graph lifetimes. Inspect <code class="docutils literal notranslate"><span class="pre">parameter_bytes</span></code>, <code class="docutils literal notranslate"><span class="pre">live_tensor_and_parameter_bytes</span></code> and <code class="docutils literal notranslate"><span class="pre">peak_with_int8_scratch_bytes</span></code>. INT8 activation scratch counts toward the workspace budget; other kernel scratch follows each native limit.</p>
+<p>The following short scalar benchmark uses one CPU thread, medians over 11 rotated orders after 3 warmups, including wrapper and activation quantization but excluding one-time weight quantization.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Linear (rows, in, out)</p></th>
+<th class="head"><p>f32 µs</p></th>
+<th class="head"><p>INT8 µs</p></th>
+<th class="head"><p>INT8 v Torch max absolute error</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1,128,11</p></td>
+<td><p>19.62</p></td>
+<td><p>16.87</p></td>
+<td><p>0.00558</p></td>
+</tr>
+<tr class="row-odd"><td><p>1,4096,10</p></td>
+<td><p>66.40</p></td>
+<td><p>66.49</p></td>
+<td><p>0.09250</p></td>
+</tr>
+<tr class="row-even"><td><p>8,256,128</p></td>
+<td><p>216.45</p></td>
+<td><p>181.94</p></td>
+<td><p>0.02137</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These are fixed synthetic workstation inputs. ARM NEON uses a separate translation unit and HWCAP dispatch and has been checked through cross-assembly. ARM/board execution and whole-model throughput are unverified. Source and source hashes are in <code class="docutils literal notranslate"><span class="pre">build/agent2-sw-framework/a2-w037-lightweight-host/benchmark/</span></code>.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--output<span class="w"> </span>build/snn-int8-demo<span class="w"> </span>--int8
+</pre></div>
+</div>
+</section>
+<section id="pl-operation-grouping-and-reentry">
+<h2>PL operation grouping and reentry<a class="headerlink" href="#pl-operation-grouping-and-reentry" title="Link to this heading">#</a></h2>
+<p>Up to 24 linearly connected native layers are passed at a time to the existing resident compiler. An admissible chain is grouped into one package to reduce host round trips and STARTs. Splits occur at branches and package geometry/capacity boundaries. Existing <code class="docutils literal notranslate"><span class="pre">policy=&quot;efficient&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">model_id</span></code> are passed to each PL island’s compiler call. Inspect <code class="docutils literal notranslate"><span class="pre">pl_islands</span></code> and <code class="docutils literal notranslate"><span class="pre">starts_per_window</span></code> in <code class="docutils literal notranslate"><span class="pre">report()</span></code> for the actual plan.</p>
+<p>A bias-free frozen INT4 Conv2d→EventIF T1 pattern on binary BCHW can lower to C binary im2col and the existing K1 PL primitive. Exact weight/threshold conversion, a no-overflow certificate, shape and package capacity checks are all required. If proof fails, use the explicitly permitted C Conv+threshold region. Performance advantages across larger kernels and dilation require separate measurement.</p>
+<p>Execute a plan containing PL islands with <code class="docutils literal notranslate"><span class="pre">program(example,</span> <span class="pre">board=board)</span></code> or <code class="docutils literal notranslate"><span class="pre">board.load(program)</span></code> followed by the existing Board API. Actual device admission follows existing public profile checks. One call is one window and neuron state does not persist across calls. Hybrid batch/stream is currently rejected.</p>
+<p>Before execution the artifact schema, reference order, parameter bytes, shape/domain, resident package and memory bounds are checked. <code class="docutils literal notranslate"><span class="pre">max_workspace_bytes</span></code> defaults to 64 MiB. The report’s live tensor+parameter estimate excludes JSON, PL image, DMA and kernel scratch; per-native-kernel scratch limits also apply.</p>
+</section>
+<section id="installation-and-example">
+<h2>Installation and example<a class="headerlink" href="#installation-and-example" title="Link to this heading">#</a></h2>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[compiler]&#39;</span>
+python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--output<span class="w"> </span>build/snn-hybrid-demo
+</pre></div>
+</div>
+<p>The example compares Torch DirectCurrentLIF and host-head output against C execution, save and reload. An installation without the C extension reports the required installation condition when native execution is requested. Use <code class="docutils literal notranslate"><span class="pre">examples/</span></code> from a checkout or source distribution.</p>
+<p>New f32/INT8 hybrid plans use the <code class="docutils literal notranslate"><span class="pre">.spm.hybrid.v2</span></code> envelope. Existing f64 plans remain <code class="docutils literal notranslate"><span class="pre">.spm.hybrid.v1</span></code>. Existing resident/virtual artifact loaders remain in use. Upgrade installations that do not support the new schema before reloading. To replace an artifact, export to a separate path and preserve the original.</p>
+</section>
+<section id="hardware-verification-scope">
+<h2>Hardware verification scope<a class="headerlink" href="#hardware-verification-scope" title="Link to this heading">#</a></h2>
+<p>The INT16 state kernel has scalar and ARM NEON dispatch. It preserves time/event order and vectorizes independent state lanes. Current verification covers host scalar, C sanitizer and ARM cross-assembly. ARM execution and board latency remain unverified. Native DMA wait uses a C monotonic loop, with a Python callback for PYNQ status observation and the existing driver for final handling.</p>
+<p>The included deployment image has its own capability and register contract.
+Image verification and load-time admission remain authoritative. Binary output
+from a C host neuron does not enable direct-current FPGA ingress. Model/input
+qualification applies to its recorded bytes; see <a class="reference internal" href="results.html"><span class="std std-doc">measured performance</span></a>.
+J/input, J/spike and total latency require compatible measured calibration.</p>
+</section>
+<section id="compact-1d-export-and-spatial-capacity">
+<h2>Compact 1D export and spatial capacity<a class="headerlink" href="#compact-1d-export-and-spatial-capacity" title="Link to this heading">#</a></h2>
+<p>The compact target accepts the existing Conv1d and MaxPool1d lowering through
+the ordinary compiler entrypoint. The transform maps temporal 1D geometry onto
+a height-one 2D representation and preserves its kernel, stride, padding,
+neurons and flatten order. Existing operator restrictions still apply.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example_input</span><span class="p">,</span>
+    <span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;spikemold.bit&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The supplied Speech CNN checkpoint produces the same compact artifact as its
+explicit <code class="docutils literal notranslate"><span class="pre">lower_1d</span></code> path. Its previous board receipt binds that exact artifact.</p>
+<p>Spatial placement also checks a necessary capacity bound before searching
+stage groups. The diagnostic reports output rows, vectors per row, maximum
+rows per tile and the minimum tile count against the qualified limit. The
+supplied Gesture LIF32 first layer has 128 output rows and 512 vectors per row.
+At 8192 vectors per tile it needs at least eight tiles, exceeding the current
+four-tile execution-plan limit. That unchanged model remains unsupported on
+this path. The compiler reports the bound before an unsuccessful placement
+search.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="reports.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Read a training log</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="scaling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Training and deployment at the selected hardware scale</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#runnable-cpu-examples">Runnable CPU examples</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cpu-multi-step-training">CPU multi-step training</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#training-schedule-and-resumption">Training schedule and resumption</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-c-host-regions">Explicit C host regions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-dynamic-int8">Explicit dynamic INT8</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pl-operation-grouping-and-reentry">PL operation grouping and reentry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation-and-example">Installation and example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hardware-verification-scope">Hardware verification scope</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#compact-1d-export-and-spatial-capacity">Compact 1D export and spatial capacity</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

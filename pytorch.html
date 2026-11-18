@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Authoring with PyTorch &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'pytorch';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Using PyTorch operations" href="operations.html" />
+    <link rel="prev" title="Input formats and output meaning" href="inputs.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Install SpikePress</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Compile your first SNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Runnable examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inputs.html">Input formats and output meaning</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Authoring with PyTorch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="operations.html">Using PyTorch operations</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="getting-started.html" class="nav-link">Get started</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Authoring with PyTorch</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="authoring-with-pytorch">
+<h1>Authoring with PyTorch<a class="headerlink" href="#authoring-with-pytorch" title="Link to this heading">#</a></h1>
+<p>SpikePress keeps <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>, <code class="docutils literal notranslate"><span class="pre">state_dict</span></code>, autograd and ordinary
+optimizers. Its native event layers define the bounded integer neuron behavior
+that can be compiled. An arbitrary SpikingJelly or snnTorch checkpoint is not
+automatically equivalent to these layers.</p>
+<section id="moving-from-spikingjelly-or-snntorch">
+<h2>Moving from SpikingJelly or snnTorch<a class="headerlink" href="#moving-from-spikingjelly-or-snntorch" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Familiar workflow</p></th>
+<th class="head"><p>SpikePress behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Construct a <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></p></td>
+<td><p>Compose native layers from <code class="docutils literal notranslate"><span class="pre">spikepress.nn</span></code>; ordinary <code class="docutils literal notranslate"><span class="pre">torch.nn</span></code> host operators require explicit supported hybrid compilation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Select single-step or multi-step mode</p></td>
+<td><p>Pass the full <code class="docutils literal notranslate"><span class="pre">B,T,C,H,W</span></code> or <code class="docutils literal notranslate"><span class="pre">B,T,C,L</span></code> tensor to native event layers and set <code class="docutils literal notranslate"><span class="pre">SparseEventTrainingPreset(timesteps=T)</span></code>. T is 1–64.</p></td>
+</tr>
+<tr class="row-even"><td><p>Carry membrane state across calls</p></td>
+<td><p>Native event state resets between forward calls and carries only within T. Do not assume a library’s persistent-state behavior.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Reset neuron state at a sequence boundary</p></td>
+<td><p>Each native forward call is already a new sequence. There is no general external-library reset adapter.</p></td>
+</tr>
+<tr class="row-even"><td><p>Use an optimizer and surrogate gradients</p></td>
+<td><p>Native layers expose trainable parameters and their documented QAT/surrogate semantics. Training dtype does not imply floating-point PL execution.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Load a pretrained <code class="docutils literal notranslate"><span class="pre">state_dict</span></code></p></td>
+<td><p>Reconstruct the matching architecture, configuration and numeric meaning first. Matching tensor shapes alone do not prove equivalence.</p></td>
+</tr>
+<tr class="row-even"><td><p>Export after <code class="docutils literal notranslate"><span class="pre">model.eval()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">prepare</span></code> creates a deployment copy; <code class="docutils literal notranslate"><span class="pre">compile</span></code> decides exact acceptance. It does not silently replace unsupported operators.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See <a class="reference internal" href="training.html"><span class="std std-doc">training</span></a> for a complete optimizer loop and <a class="reference internal" href="api/nn.html"><span class="std std-doc">layer reference</span></a>
+for constructor signatures. Binary event tensors represent spikes, not arbitrary
+analog features. Explicit direct-current and hybrid paths have separate contracts.</p>
+</section>
+<section id="a-complete-classifier-optimizer-loop">
+<h2>A complete classifier optimizer loop<a class="headerlink" href="#a-complete-classifier-optimizer-loop" title="Link to this heading">#</a></h2>
+<p>The following CPU example defines its model, data, labels, loss and optimizer.
+It performs two updates on synthetic binary windows. The terminal host head
+uses the same temporal/spatial mean as the deployed mean head. It demonstrates
+API integration, not learned dataset accuracy.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">IFLinear</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.sparse_event_training</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseEventTrainingPreset</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">backbone</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">IFLinear</span><span class="p">(</span>
+    <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">SparseEventTrainingPreset</span><span class="p">(</span><span class="n">timesteps</span><span class="o">=</span><span class="mi">4</span><span class="p">)))</span>
+<span class="n">head</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">([</span><span class="o">*</span><span class="n">backbone</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="o">*</span><span class="n">head</span><span class="o">.</span><span class="n">parameters</span><span class="p">()],</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">(</span><span class="n">set_to_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">backbone</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>  <span class="c1"># B,C</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">head</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="c1"># Export only the supported backbone; the biased head is a host component.</span>
+<span class="n">prepared</span><span class="p">,</span> <span class="n">details</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">backbone</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">inputs</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">prepared</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[:</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">assert</span> <span class="n">compiled</span><span class="o">.</span><span class="n">rejection_report</span><span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PyTorch classifier update and backbone export: PASS&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PyTorch classifier update and backbone export: PASS
+</pre></div>
+</div>
+<p>For deployment, pass your matching <code class="docutils literal notranslate"><span class="pre">bitstream=</span></code> to preparation and compilation,
+then bind <code class="docutils literal notranslate"><span class="pre">head.weight.detach().numpy()</span></code>, <code class="docutils literal notranslate"><span class="pre">head.bias.detach().numpy()</span></code> and the
+class order with <a class="reference internal" href="deploy.html"><span class="std std-doc">application export</span></a>. Keep the trained head in your
+checkpoint as well as the backbone. In a real task, use a DataLoader and an
+independent validation split; see <a class="reference internal" href="datasets.html"><span class="std std-doc">data preparation</span></a>. The fully
+saved/resumable CPU workflow is described in <a class="reference internal" href="tutorials.html"><span class="std std-doc">runnable examples</span></a>.</p>
+</section>
+<section id="mixing-operators-and-choosing-a-neuron">
+<h2>Mixing operators and choosing a neuron<a class="headerlink" href="#mixing-operators-and-choosing-a-neuron" title="Link to this heading">#</a></h2>
+<p>Use <a class="reference internal" href="operations.html"><span class="std std-doc">PyTorch operations</span></a> for the explicit C host route and
+unsupported-operation checks. Training a PyTorch module does not guarantee
+that its graph can be compiled.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>API</p></th>
+<th class="head"><p>Weights</p></th>
+<th class="head"><p>Temporal state</p></th>
+<th class="head"><p>Training behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IFLinear</span></code> / <code class="docutils literal notranslate"><span class="pre">LIFLinear</span></code></p></td>
+<td><p>Trainable INT4 shadows</p></td>
+<td><p>Yes, within T</p></td>
+<td><p>Native surrogate-gradient training.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Threshold</span></code> (older name <code class="docutils literal notranslate"><span class="pre">EventIF</span></code>)</p></td>
+<td><p>None</p></td>
+<td><p>None</p></td>
+<td><p>Hard single-step binary comparison; no surrogate gradient.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">torch.nn.Linear</span></code></p></td>
+<td><p>Trainable floats</p></td>
+<td><p>None</p></td>
+<td><p>Ordinary PyTorch training; supported deployment needs the explicit host path.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">MaxPool1d</span></code> and <code class="docutils literal notranslate"><span class="pre">MaxPool2d</span></code> for pooling; old <code class="docutils literal notranslate"><span class="pre">Event*</span></code> names remain aliases.
+For residual addition use the <a class="reference internal" href="residuals.html"><span class="std std-doc">explicit ADD graph</span></a>. Parameter
+meanings and conflicts are in the <a class="reference internal" href="api/parameters.html"><span class="std std-doc">reference</span></a>.</p>
+</section>
+<section id="precision-performance-and-checkpoints">
+<h2>Precision, performance and checkpoints<a class="headerlink" href="#precision-performance-and-checkpoints" title="Link to this heading">#</a></h2>
+<p>Native deployment uses signed INT4 weights and INT16 state with defined
+accumulation, saturation, reset and decay. Floating-point shadows enable
+training; <code class="docutils literal notranslate"><span class="pre">prepare</span></code> is not a general post-training converter. The supported
+retention codebook is 1, 1/2, 1/4, 1/8 and 1/16 where admitted. Continuous
+PLIF or subtractive reset can have different semantics; explicit approximation
+needs error bounds and task-accuracy validation. Hybrid C paths follow source
+float32/float64 by default; dynamic INT8 is explicit and requires validation.
+See <a class="reference internal" href="api/parameters.html"><span class="std std-doc">parameters</span></a> and <a class="reference internal" href="operations.html"><span class="std std-doc">operations</span></a>.</p>
+<p>Native state carries within a full temporal forward and resets between calls.
+Optional CPU and CUDA multi-step paths have different limits; inspect the
+observed execution report and benchmark after warmup. See <a class="reference internal" href="training.html"><span class="std std-doc">training</span></a>
+and <a class="reference internal" href="execution.html"><span class="std std-doc">execution</span></a>.</p>
+<p>Save architecture, T, reset/decay, precision and execution configuration with
+<code class="docutils literal notranslate"><span class="pre">state_dict</span></code>, and optimizer/RNG/loader state for your own resumption contract.
+<code class="docutils literal notranslate"><span class="pre">prepare</span></code> deep-copies and preserves train/eval mode; an optimizer for the
+original does not update the copy. Prepare an evaluation model, recompile after
+changes, and keep deployment <code class="docutils literal notranslate"><span class="pre">.spm</span></code> files separate from checkpoints. The
+synthetic example’s tested resumption covers CPU step boundaries, not arbitrary
+distributed training.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="inputs.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Input formats and output meaning</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="operations.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Using PyTorch operations</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moving-from-spikingjelly-or-snntorch">Moving from SpikingJelly or snnTorch</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-complete-classifier-optimizer-loop">A complete classifier optimizer loop</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mixing-operators-and-choosing-a-neuron">Mixing operators and choosing a neuron</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precision-performance-and-checkpoints">Precision, performance and checkpoints</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

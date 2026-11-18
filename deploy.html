@@ -1,0 +1,597 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Deploy an event application &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'deploy';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Terminal host classification" href="readout.html" />
+    <link rel="prev" title="Supported operations" href="support.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="compatibility.html">Choose a compatible deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Supported operations</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Deploy an event application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readout.html">Terminal host classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resident.html">Packages and model loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Common questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery.html">Runtime failure and ownership contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Deploy on PYNQ-Z2</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="deployment-guide.html" class="nav-link">Deployment</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Deploy an event application</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="deploy-an-event-application">
+<h1>Deploy an event application<a class="headerlink" href="#deploy-an-event-application" title="Link to this heading">#</a></h1>
+<p>An application binds an existing validated <code class="docutils literal notranslate"><span class="pre">.spm</span></code>, event preprocessing, a host
+head, and ordered class labels. It reuses the compiler, artifact validator,
+Board and C result kernels. It does not change a model, choose a hardware ABI,
+quantize a head or establish accuracy. The default mean head uses
+<code class="docutils literal notranslate"><span class="pre">spikepress.application.v1</span></code>; explicit count, temporal and flatten heads use v2.</p>
+<section id="run-a-complete-cpu-export">
+<h2>Run a complete CPU export<a class="headerlink" href="#run-a-complete-cpu-export" title="Link to this heading">#</a></h2>
+<p>After <a class="reference internal" href="setup.html"><span class="std std-doc">installation</span></a>, including the native C extension:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/application_deployment.py<span class="w"> </span>--output<span class="w"> </span>runs/first-app
+python<span class="w"> </span>-m<span class="w"> </span>spikepress.cli<span class="w"> </span>inspect-deployment<span class="w"> </span>runs/first-app/application
+</pre></div>
+</div>
+<p>This writes <code class="docutils literal notranslate"><span class="pre">raw_events.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">encoded.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">model.spm</span></code>, <code class="docutils literal notranslate"><span class="pre">application/</span></code> and
+<code class="docutils literal notranslate"><span class="pre">report.json</span></code>; the report retains <code class="docutils literal notranslate"><span class="pre">hardware_qualification:</span> <span class="pre">NOT_CHECKED</span></code>.
+The two illustrative labels are <code class="docutils literal notranslate"><span class="pre">active</span></code> and <code class="docutils literal notranslate"><span class="pre">inactive</span></code>. The head is fixed for
+the example and has no trained accuracy claim. Add <code class="docutils literal notranslate"><span class="pre">--bitstream</span></code> with the
+qualified local image trio when exporting for deployment.</p>
+</section>
+<section id="bind-your-own-application">
+<h2>Bind your own application<a class="headerlink" href="#bind-your-own-application" title="Link to this heading">#</a></h2>
+<p>The API fragment below assumes <code class="docutils literal notranslate"><span class="pre">model.spm</span></code>, class-by-channel <code class="docutils literal notranslate"><span class="pre">weight</span></code>,
+class-sized <code class="docutils literal notranslate"><span class="pre">bias</span></code> and ordered <code class="docutils literal notranslate"><span class="pre">class_names</span></code> from your own trained head.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+
+<span class="n">spikepress</span><span class="o">.</span><span class="n">export_deployment</span><span class="p">(</span><span class="s2">&quot;model.spm&quot;</span><span class="p">,</span> <span class="s2">&quot;new-application&quot;</span><span class="p">,</span>
+    <span class="n">head_weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span> <span class="n">head_bias</span><span class="o">=</span><span class="n">bias</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>
+    <span class="n">preprocessing</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;encoding&quot;</span><span class="p">:</span> <span class="s2">&quot;uniform_binary_or&quot;</span><span class="p">,</span> <span class="s2">&quot;window_start&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                   <span class="s2">&quot;window_end&quot;</span><span class="p">:</span> <span class="mi">16000</span><span class="p">,</span> <span class="s2">&quot;timesteps&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+                   <span class="s2">&quot;shape_hwc&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">8</span><span class="p">]})</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">Deployment</span><span class="p">(</span><span class="s2">&quot;new-application&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The input contract is explicit <code class="docutils literal notranslate"><span class="pre">[time,y,x,channel]</span></code>, with timestamps in the
+caller’s declared unit and a half-open <code class="docutils literal notranslate"><span class="pre">[start,end)</span></code> window. The C kernel bins
+uniformly into binary <code class="docutils literal notranslate"><span class="pre">[1,T,C,H,W]</span></code>; coincident events use OR. It rejects
+out-of-window events, noninteger coordinates and nonfinite values instead of
+dropping them. This encoding must match training. It does not implement an
+implicit sensor fold, crop, polarity reorder or normalization. Declare and
+validate those transforms upstream if the trained model needs them.</p>
+<p>The default head uses mean over time and space, then float64 linear weights and
+bias on the host. Other explicit reductions are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">reduction=&quot;count&quot;</span></code>: sum over time and average over space per channel.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reduction=&quot;temporal&quot;,</span> <span class="pre">temporal_weights=[...]</span></code>: weighted timestep sum and
+spatial mean; weights must be nonnegative and sum to one within 1e-5.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reduction=&quot;flatten&quot;,</span> <span class="pre">time_bins=N,</span> <span class="pre">grid=[H,</span> <span class="pre">W]</span></code>: adaptive time and spatial
+bins, flattened in time-bin, channel, row, column order. Weight width must be
+<code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">*</span> <span class="pre">channels</span> <span class="pre">*</span> <span class="pre">H</span> <span class="pre">*</span> <span class="pre">W</span></code>.</p></li>
+</ul>
+<p>For example, pass <code class="docutils literal notranslate"><span class="pre">reduction=&quot;flatten&quot;,</span> <span class="pre">time_bins=2,</span> <span class="pre">grid=[2,</span> <span class="pre">2]</span></code> to
+<code class="docutils literal notranslate"><span class="pre">export_deployment</span></code> along with a head of the corresponding width. These modes
+use the existing native result-frame feature and linear kernels. Reduction
+metadata is fixed in the manifest; changing it requires a new export and
+matching head. Existing v1 mean assets keep their original interpretation.
+Direct-current input and v13 count-mode packages remain unsupported by this
+application format. Resident v12 event packages and
+existing virtual/count-composed v12 event programs retain their own compiler
+capacity limits. A count-composed program is distinct from v13 count output.
+Existing <code class="docutils literal notranslate"><span class="pre">.spm</span></code> files and <code class="docutils literal notranslate"><span class="pre">Board.run()</span></code> are unchanged.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/application_deployment.py<span class="w"> </span>--output<span class="w"> </span>/tmp/new-spikepress-app
+spikepress<span class="w"> </span>inspect-deployment<span class="w"> </span>/tmp/new-spikepress-app/application
+</pre></div>
+</div>
+<p>Use a new output directory. The example creates <code class="docutils literal notranslate"><span class="pre">model.spm</span></code>, an <code class="docutils literal notranslate"><span class="pre">application/</span></code>
+manifest and assets, <code class="docutils literal notranslate"><span class="pre">raw_events.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">encoded.npy</span></code>, and <code class="docutils literal notranslate"><span class="pre">report.json</span></code>.
+For a locally available, qualified image and matching sidecars, add
+<code class="docutils literal notranslate"><span class="pre">--bitstream</span> <span class="pre">bitstreams/pynq-z2/spikemold.bit</span></code> when exporting; this selects its compiler
+profile without programming hardware. Transfer the complete application and
+matching image bundle to the board through your established procedure.</p>
+<p>This example encodes and exports on the CPU; its report says hardware
+qualification <code class="docutils literal notranslate"><span class="pre">NOT_CHECKED</span></code>. It needs the installed C native extension.
+Compiler-only installs can export/inspect applications but execution raises if
+native code is missing. No Python numerical fallback is selected.</p>
+<p>When a matching profile is qualified and board execution has been authorized,
+use the existing Board lifecycle:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># board is an explicitly authorized, connected, matching Board session.</span>
+<span class="n">app</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>  <span class="c1"># Explicit load; does not retry or clear a fault.</span>
+<span class="n">prediction</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">raw_events</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">prediction</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">run</span></code> requires the same explicitly loaded application snapshot. It encodes in
+C and passes the existing <code class="docutils literal notranslate"><span class="pre">Classifier</span></code> to native <code class="docutils literal notranslate"><span class="pre">Board.run(readout=...)</span></code>.
+Reloading another model invalidates that application binding. Existing board
+fault/quarantine rules still apply. The wrapper’s <code class="docutils literal notranslate"><span class="pre">NOT_CHECKED</span></code> field is a
+qualification label, even when a real device is used; it is not a test receipt.
+Python still orchestrates Board/DMA calls in the current runtime: see the
+<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/r114.md">C migration gates</a> before calling the whole driver C.</p>
+<p>For repeated use of the same input with a supported resident model or Count
+program, <code class="docutils literal notranslate"><span class="pre">board.prepare_input(input_tensor)</span></code> creates an owned snapshot. Pass the
+handle to <code class="docutils literal notranslate"><span class="pre">board.run()</span></code>; every call still transfers the input and executes the
+model. Reloading or closing the Board invalidates it, and other virtual and
+hybrid programs do not support this handle. Include the one-time preparation
+cost when reporting end-to-end timing. See <a class="reference internal" href="setup.html"><span class="std std-doc">installation</span></a> for
+an example and the full lifecycle.</p>
+<p>For externally captured v12 raw result words, <code class="docutils literal notranslate"><span class="pre">app.classify(words,</span> <span class="pre">window_tag=17)</span></code> validates the complete frame and runs its head through the
+existing C parser and readout. It rejects truncation, extra words, incorrect
+tags/metadata, record-count mismatch, duplicates, faults and nonfinite scores.
+Hashless frames report <code class="docutils literal notranslate"><span class="pre">result_hash_source:</span> <span class="pre">host_context</span></code>; this cannot attest
+the executed image or session. Bind capture, bit/HWH and session provenance
+separately. <code class="docutils literal notranslate"><span class="pre">Board.run()</span></code> returns decoded results, not raw words; pass those
+through <code class="docutils literal notranslate"><span class="pre">app.run</span></code> rather than passing its mapping to <code class="docutils literal notranslate"><span class="pre">classify</span></code>.</p>
+<p>Exports require a fresh destination and write <code class="docutils literal notranslate"><span class="pre">manifest.json</span></code> last. A partial
+directory is not complete. Model/head/package hashes catch inconsistent assets;
+they do not authenticate a self-provided manifest. The head loader bounds both
+compressed and expanded sizes and validates array headers before allocation.
+Retain trusted release hashes independently. Replace an application by exporting
+to a new directory and explicitly loading it; keep the old directory for rollback.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="support.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Supported operations</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="readout.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Terminal host classification</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-a-complete-cpu-export">Run a complete CPU export</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-your-own-application">Bind your own application</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
