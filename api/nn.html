@@ -396,6 +396,19 @@ surrogate gradient. It is not a standalone recurrent IF/LIF training neuron.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SparseEventTrainingPreset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'hw_if_uniform_sparse'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'int'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reset_mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'zero'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'bool'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">surrogate_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">25.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'float'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.155</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="s"><span class="pre">'str'</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'spikepress.sparse_event_training_preset.v3'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.sparse_event_training.SparseEventTrainingPreset" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+<p>Use one preset for every recurrent layer in a window. The examples below use
+three steps, a 4-bit weight grid, 16-bit state, and surrogate gradients.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Conv1d</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">,</span> <span class="n">IFLinear</span><span class="p">,</span> <span class="n">LIFConv1d</span><span class="p">,</span> <span class="n">LIFConv2d</span><span class="p">,</span> <span class="n">LIFLinear</span><span class="p">,</span>
+    <span class="n">MaxPool1d</span><span class="p">,</span> <span class="n">MaxPool2d</span><span class="p">,</span> <span class="n">Threshold</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.sparse_event_training</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseEventTrainingPreset</span>
+
+<span class="n">preset</span> <span class="o">=</span> <span class="n">SparseEventTrainingPreset</span><span class="p">(</span><span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">preset</span><span class="o">.</span><span class="n">weight_bits</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">and</span> <span class="n">preset</span><span class="o">.</span><span class="n">state_bits</span> <span class="o">==</span> <span class="mi">16</span>
+</pre></div>
+</div>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Short name</p></th>
@@ -431,6 +444,19 @@ surrogate gradient. It is not a standalone recurrent IF/LIF training neuron.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>A unit kernel on a one-channel signal keeps time and length. Set the weight
+and threshold to 1 so a single event produces one spike at the same position.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">signal</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># B,T,C,L</span>
+<span class="n">signal</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">conv1d</span> <span class="o">=</span> <span class="n">Conv1d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">conv1d</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">conv1d</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">conv1d</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">signal</span><span class="o">.</span><span class="n">shape</span>
+<span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventConvLIF1d">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventConvLIF1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventConvLIF1d" title="Link to this definition">#</a></dt>
@@ -438,6 +464,18 @@ surrogate gradient. It is not a standalone recurrent IF/LIF training neuron.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Apply half retention at each step. This is the same layout as <code class="docutils literal notranslate"><span class="pre">Conv1d</span></code>, so a
+model can replace the layer without changing the input shape.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lif1d</span> <span class="o">=</span> <span class="n">LIFConv1d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">decay_shift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">lif1d</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">conv1d</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+    <span class="n">lif1d</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">conv1d</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">lif1d</span><span class="p">(</span><span class="n">signal</span><span class="p">),</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The isolated pulse reaches threshold immediately in both examples. See
+<a class="reference internal" href="#direct-current-input">the direct-current example</a> for a sequence where
+retention changes the output.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventConvIF2d">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventConvIF2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventConvIF2d" title="Link to this definition">#</a></dt>
@@ -448,6 +486,20 @@ temporal ShiftLIF deployment is a separate compiler contract.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Here a 3×3 kernel with padding 1 preserves the height and width. Only the
+center weight is nonzero, so the event stays at row 2, column 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">frames</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># B,T,C,H,W</span>
+<span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">conv2d</span> <span class="o">=</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">conv2d</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+    <span class="n">conv2d</span><span class="o">.</span><span class="n">weight</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">conv2d</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">conv2d</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">frames</span><span class="o">.</span><span class="n">shape</span>
+<span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventConvLIF2d">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventConvLIF2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_channels</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventConvLIF2d" title="Link to this definition">#</a></dt>
@@ -455,6 +507,20 @@ temporal ShiftLIF deployment is a separate compiler contract.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Use a stride of 2 to reduce each 4×4 frame to 2×2. Put the input event on a
+sampled coordinate so it appears at output row 1, column 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stride_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+<span class="n">stride_input</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">lif2d</span> <span class="o">=</span> <span class="n">LIFConv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                 <span class="n">decay_shift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">lif2d</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">conv2d</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+    <span class="n">lif2d</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">conv2d</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">lif2d</span><span class="p">(</span><span class="n">stride_input</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">out</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
 </section>
 <section id="linear-and-pooling">
 <h2>Linear and pooling<a class="headerlink" href="#linear-and-pooling" title="Link to this heading">#</a></h2>
@@ -465,6 +531,16 @@ temporal ShiftLIF deployment is a separate compiler contract.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>A sequence of two features can use the compact authoring layout <code class="docutils literal notranslate"><span class="pre">B,T,C</span></code>.
+Identity weights map the two input events to different output features.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]])</span>
+<span class="n">if_linear</span> <span class="o">=</span> <span class="n">IFLinear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">if_linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="n">if_linear</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">if_linear</span><span class="p">(</span><span class="n">features</span><span class="p">),</span> <span class="n">features</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventLinearLIF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventLinearLIF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_features</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventLinearLIF" title="Link to this definition">#</a></dt>
@@ -472,6 +548,16 @@ temporal ShiftLIF deployment is a separate compiler contract.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>For the same feature sequence, choose exact half retention. A unit-spatial
+<code class="docutils literal notranslate"><span class="pre">B,T,C,1,1</span></code> input keeps its singleton spatial axes on output.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lif_linear</span> <span class="o">=</span> <span class="n">LIFLinear</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">decay</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="n">spatial_features</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">lif_linear</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">if_linear</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+    <span class="n">lif_linear</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">if_linear</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">lif_linear</span><span class="p">(</span><span class="n">spatial_features</span><span class="p">),</span> <span class="n">spatial_features</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventMaxPool1d">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventMaxPool1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventMaxPool1d" title="Link to this definition">#</a></dt>
@@ -479,6 +565,13 @@ temporal ShiftLIF deployment is a separate compiler contract.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Pool each pair of neighboring positions independently for every timestep.
+The event at input index 2 moves to output index 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pooled_signal</span> <span class="o">=</span> <span class="n">MaxPool1d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">signal</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pooled_signal</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pooled_signal</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventMaxPool2d">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventMaxPool2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stride</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventMaxPool2d" title="Link to this definition">#</a></dt>
@@ -486,6 +579,19 @@ temporal ShiftLIF deployment is a separate compiler contract.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Each 2×2 tile produces one event if any pixel in the tile fired. The event
+at row 2, column 1 moves to row 1, column 0. Time stays at step 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pooled_frames</span> <span class="o">=</span> <span class="n">MaxPool2d</span><span class="p">(</span><span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">frames</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pooled_frames</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">pooled_frames</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id1">
+<img alt="An event at row 2, column 1 of a four-by-four frame becomes an event at row 1, column 0 in a two-by-two output." src="../_images/pooling.png" />
+<figcaption>
+<p><span class="caption-text">The 2×2 tiles at timestep 1. Bold lines delimit the pooling windows.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
 </section>
 <section id="threshold-and-terminal-helpers">
 <h2>Threshold and terminal helpers<a class="headerlink" href="#threshold-and-terminal-helpers" title="Link to this heading">#</a></h2>
@@ -500,6 +606,12 @@ gradient. Use the fused IF/LIF layers for native temporal training.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>A current equal to the threshold fires in this stateless comparison.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">current</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]])</span>  <span class="c1"># B,C for one step</span>
+<span class="n">events</span> <span class="o">=</span> <span class="n">Threshold</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">)(</span><span class="n">current</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">events</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]]</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.EventReadout">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">EventReadout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.EventReadout" title="Link to this definition">#</a></dt>
@@ -507,12 +619,35 @@ gradient. Use the fused IF/LIF layers for native temporal training.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Place <code class="docutils literal notranslate"><span class="pre">EventReadout</span></code> at the end of an event backbone. Its PyTorch forward
+preserves every event and returns the same tensor.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">EventReadout</span>
+
+<span class="n">terminal</span> <span class="o">=</span> <span class="n">EventReadout</span><span class="p">()(</span><span class="n">pooled_frames</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">terminal</span> <span class="ow">is</span> <span class="n">pooled_frames</span>
+</pre></div>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.nn.pack_event_features">
 <span class="sig-name descname"><span class="pre">pack_event_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.pack_event_features" title="Link to this definition">#</a></dt>
 <dd><p>Explicitly map BCHW binary events to B,C,1,1 in row-major order.</p>
 </dd></dl>
 
+<p>For one frame, fold its channels, rows, and columns into a feature axis.
+Here the firing output pixel at row 1, column 0 becomes feature 2.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">pack_event_features</span>
+
+<span class="n">packed</span> <span class="o">=</span> <span class="n">pack_event_features</span><span class="p">(</span><span class="n">pooled_frames</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>  <span class="c1"># select t=1, then BCHW</span>
+<span class="k">assert</span> <span class="n">packed</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">packed</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id2">
+<img alt="Output pixels at coordinates zero-zero, zero-one, one-zero and one-one appear as features zero through three in row-major order." src="../_images/feature-layout.png" />
+<figcaption>
+<p><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">pack_event_features</span></code> keeps channel order and visits columns fastest within a channel.</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
 </section>
 <section id="direct-current-input">
 <h2>Direct-current input<a class="headerlink" href="#direct-current-input" title="Link to this heading">#</a></h2>
@@ -528,6 +663,15 @@ This module is a software reference until its FPGA input ABI is admitted.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>Each 0.5 input becomes code 1 at scale 0.5. With threshold code 2,
+the IF neuron adds two steps and then resets.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">DirectCurrentIF</span><span class="p">,</span> <span class="n">DirectCurrentLIF</span>
+
+<span class="n">current_window</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="n">if_neuron</span> <span class="o">=</span> <span class="n">DirectCurrentIF</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">if_neuron</span><span class="p">(</span><span class="n">current_window</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.nn.DirectCurrentLIF">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DirectCurrentLIF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decay_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.nn.DirectCurrentLIF" title="Link to this definition">#</a></dt>
@@ -535,6 +679,19 @@ This module is a software reference until its FPGA input ABI is admitted.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>With half retention, previous code 1 decays to 0 by integer shift, so
+the same window never reaches threshold code 2.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lif_neuron</span> <span class="o">=</span> <span class="n">DirectCurrentLIF</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                              <span class="n">threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">decay_shift</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">lif_neuron</span><span class="p">(</span><span class="n">current_window</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id3">
+<img alt="For three identical input codes, IF reaches threshold at timestep one and resets, while half-retention LIF stays at code one." src="../_images/if-lif.png" />
+<figcaption>
+<p><span class="caption-text">Integer membrane value before threshold and reset for the same three inputs.</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
 </section>
 <section id="compatibility-helpers">
 <h2>Compatibility helpers<a class="headerlink" href="#compatibility-helpers" title="Link to this heading">#</a></h2>
@@ -550,6 +707,15 @@ uses a different export path and must not be replaced with OR.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 </dd></dl>
 
+<p>For compatibility with an older binary OR graph, merge the two branches
+element by element. The coincident events in the middle produce a single 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrResidual</span>
+
+<span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]])</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]])</span>
+<span class="k">assert</span> <span class="n">OrResidual</span><span class="p">()(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]]</span>
+</pre></div>
+</div>
 </section>
 </section>
 

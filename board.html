@@ -312,6 +312,7 @@
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="compatibility.html">Choose a compatible deployment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hardware-design.html">SpikeMold hardware design</a></li>
 <li class="toctree-l1"><a class="reference internal" href="support.html">Supported operations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploy an event application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="readout.html">Terminal host classification</a></li>
@@ -423,11 +424,12 @@ Record the commit and retain the matching image trio with the model.</p>
 </section>
 <section id="transfer-the-model-and-input">
 <h2>2. Transfer the model and input<a class="headerlink" href="#transfer-the-model-and-input" title="Link to this heading">#</a></h2>
-<p>Set your actual board login and hostname:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">BOARD_HOST</span><span class="o">=</span>xilinx@your-board-hostname
-ssh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_HOST</span><span class="s2">&quot;</span><span class="w"> </span><span class="s1">&#39;mkdir -p /home/xilinx/spikepress-demo&#39;</span>
+<p>Set your board login and hostname. Transfer the files to a directory under
+that account’s home directory:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">BOARD_HOST</span><span class="o">=</span>your-board-user@your-board-hostname
+ssh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_HOST</span><span class="s2">&quot;</span><span class="w"> </span><span class="s1">&#39;mkdir -p spikepress-demo&#39;</span>
 scp<span class="w"> </span>runs/board-model/model.spm<span class="w"> </span>runs/board-model/events.npy<span class="w"> </span>runs/board-model/golden.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$BOARD_HOST</span><span class="s2">:/home/xilinx/spikepress-demo/&quot;</span>
+<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$BOARD_HOST</span><span class="s2">:spikepress-demo/&quot;</span>
 </pre></div>
 </div>
 <p>Clone or pull the same commit on the board to obtain the image, SDK source and
@@ -456,13 +458,15 @@ physical MMIO, DMA or board execution.</p>
 </section>
 <section id="program-and-compare-one-output">
 <h2>4. Program and compare one output<a class="headerlink" href="#program-and-compare-one-output" title="Link to this heading">#</a></h2>
-<p>From the board checkout, use a new output path:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
+<p>From the board checkout, point to the transferred files and use a new output
+path:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">BOARD_DEMO</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/spikepress-demo&quot;</span>
+<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--bitstream<span class="w"> </span>bitstreams/pynq-z2/spikemold.bit<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--model<span class="w"> </span>/home/xilinx/spikepress-demo/model.spm<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--inputs<span class="w"> </span>/home/xilinx/spikepress-demo/events.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--golden<span class="w"> </span>/home/xilinx/spikepress-demo/golden.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output<span class="w"> </span>/home/xilinx/spikepress-demo/result.json<span class="w"> </span>--program
+<span class="w">  </span>--model<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/model.spm&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--inputs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/events.npy&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--golden<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/golden.npy&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/result.json&quot;</span><span class="w"> </span>--program
 </pre></div>
 </div>
 <p>On a compatible working board, expect <code class="docutils literal notranslate"><span class="pre">PASS_BOARD_GOLDEN</span></code> and
@@ -480,19 +484,22 @@ for the included image. A verified file alone does not attest the loaded image.<
 and <code class="docutils literal notranslate"><span class="pre">--prepared</span></code>:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--bitstream<span class="w"> </span>bitstreams/pynq-z2/spikemold.bit<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--model<span class="w"> </span>/home/xilinx/spikepress-demo/model.spm<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--inputs<span class="w"> </span>/home/xilinx/spikepress-demo/events.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--golden<span class="w"> </span>/home/xilinx/spikepress-demo/golden.npy<span class="w"> </span>--prepared<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output<span class="w"> </span>/home/xilinx/spikepress-demo/prepared-result.json
+<span class="w">  </span>--model<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/model.spm&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--inputs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/events.npy&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--golden<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/golden.npy&quot;</span><span class="w"> </span>--prepared<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/prepared-result.json&quot;</span>
 </pre></div>
 </div>
 <p>For repeated calls in one session:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
 
-<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/home/xilinx/spikepress-demo/events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;spikepress-demo&quot;</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span> <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
-    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/home/xilinx/spikepress-demo/model.spm&quot;</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">prepare_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
     <span class="n">first</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
     <span class="n">second</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>

@@ -378,57 +378,160 @@
                   
   <section id="readouts-and-application-bundles">
 <h1>Readouts and application bundles<a class="headerlink" href="#readouts-and-application-bundles" title="Link to this heading">#</a></h1>
-<p>Host readouts require explicit channel/T/shape metadata so silent channels are
-represented correctly. A C host classifier makes inference hybrid; its timing
-is separate from PL-only execution. See <a class="reference internal" href="../readout.html"><span class="std std-doc">host heads</span></a> and
-<a class="reference internal" href="../deploy.html"><span class="std std-doc">application deployment</span></a>.
-See <a class="reference internal" href="parameters.html#host-readout"><span class="std std-ref">parameters</span></a> for reduction metadata and
-<a class="reference internal" href="parameters.html#event-applications"><span class="std std-ref">event application options</span></a> for encoding
-and export controls.</p>
+<p>Readouts reduce terminal spike records on the host. Supply the declared
+output channel count and timestep count so the result includes silent channels.
+See <a class="reference internal" href="../readout.html"><span class="std std-doc">host heads</span></a> and <a class="reference internal" href="parameters.html#host-readout"><span class="std std-ref">readout parameters</span></a>.</p>
+<section id="reduce-a-spike-window">
+<h2>Reduce a spike window<a class="headerlink" href="#reduce-a-spike-window" title="Link to this heading">#</a></h2>
+<p>The following synthetic window has three timesteps, three channels, and two
+spatial positions. Bit 0 of a record’s mask is channel 0 and bit 1 is channel 1.
+Channel 2 is silent. The two positions use addresses 10 and 11. These records
+can also be supplied as the <code class="docutils literal notranslate"><span class="pre">spikes</span></code> field of a runtime result.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress</span><span class="w"> </span><span class="kn">import</span> <span class="n">readout</span>
+
+<span class="n">records</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">timestep</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">global_address</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="mb">0b001</span><span class="p">),</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">timestep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">global_address</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="mb">0b011</span><span class="p">),</span>
+    <span class="nb">dict</span><span class="p">(</span><span class="n">timestep</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">global_address</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="mb">0b010</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">window</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">channels</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id1">
+<img alt="Channel zero fires at timesteps zero and one. Channel one fires at one and two. Channel two is silent." src="../_images/readout-raster.png" />
+<figcaption>
+<p><span class="caption-text">Spatial counts are combined per channel. The horizontal axis uses zero-based timestep indices.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.readout.spike_count">
 <span class="sig-name descname"><span class="pre">spike_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.spike_count" title="Link to this definition">#</a></dt>
 <dd><p>Count spikes per output channel across the entire window.</p>
 </dd></dl>
 
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">readout</span><span class="o">.</span><span class="n">spike_count</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="o">**</span><span class="n">window</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.readout.spike_rate">
 <span class="sig-name descname"><span class="pre">spike_rate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.spike_rate" title="Link to this definition">#</a></dt>
 <dd><p>Return per-channel count divided by the fixed timestep count.</p>
 </dd></dl>
 
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">readout</span><span class="o">.</span><span class="n">spike_rate</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="o">**</span><span class="n">window</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The event rate divides by three timesteps, so a channel can exceed 1 if it
+fires at multiple positions in the same step.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.readout.first_spike">
 <span class="sig-name descname"><span class="pre">first_spike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">channels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.first_spike" title="Link to this definition">#</a></dt>
 <dd><p>Return first timestep per channel, or None for a silent channel.</p>
 </dd></dl>
 
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">readout</span><span class="o">.</span><span class="n">first_spike</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="o">**</span><span class="n">window</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.readout.population_count">
 <span class="sig-name descname"><span class="pre">population_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.population_count" title="Link to this definition">#</a></dt>
 <dd><p>Sum channel spike counts under an explicit channel-to-class map.</p>
 </dd></dl>
 
+<p>Assign channels 0 and 1 to class 0, and silent channel 2 to class 1.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">assert</span> <span class="n">readout</span><span class="o">.</span><span class="n">population_count</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.readout.global_average">
 <span class="sig-name descname"><span class="pre">global_average</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_shape_hwc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.global_average" title="Link to this definition">#</a></dt>
 <dd><p>Host mean over time and space, preserving the terminal channel axis.</p>
 </dd></dl>
 
+<p>The time-and-space mean divides each count by six opportunities, three
+steps times two positions. Shape and state address bounds describe the
+terminal layer. The upper bound is exclusive.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">geometry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">timesteps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">output_shape_hwc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                <span class="n">state_base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">state_limit</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">readout</span><span class="o">.</span><span class="n">global_average</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="o">**</span><span class="n">geometry</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.readout.linear">
 <span class="sig-name descname"><span class="pre">linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">timesteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_shape_hwc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.linear" title="Link to this definition">#</a></dt>
 <dd><p>Apply a host classifier once to time/spatial mean terminal spikes.</p>
 </dd></dl>
 
+<p>Each row of the weight matrix scores one class. The example gives class 0
+a positive weight on both firing channels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">weight</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]]</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span>
+<span class="n">logits</span> <span class="o">=</span> <span class="n">readout</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">bias</span><span class="p">,</span> <span class="o">**</span><span class="n">geometry</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_allclose</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span><span class="p">])</span>
+<span class="k">assert</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">logits</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.readout.Classifier">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Classifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">head</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.readout.Classifier" title="Link to this definition">#</a></dt>
 <dd><p>Owned deployed linear head; native execution avoids dense spike tensors.</p>
 </dd></dl>
 
-<section id="bind-preprocessing-model-and-labels">
-<h2>Bind preprocessing, model and labels<a class="headerlink" href="#bind-preprocessing-model-and-labels" title="Link to this heading">#</a></h2>
+<p>Wrap the same weights to request mean features and logits directly from a
+compatible <code class="docutils literal notranslate"><span class="pre">Board.run</span></code>. Use the actual terminal channel count for your model.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">classifier</span> <span class="o">=</span> <span class="n">readout</span><span class="o">.</span><span class="n">Classifier</span><span class="p">({</span><span class="s2">&quot;weight&quot;</span><span class="p">:</span> <span class="n">weight</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="n">bias</span><span class="p">,</span> <span class="s2">&quot;mode&quot;</span><span class="p">:</span> <span class="s2">&quot;mean&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Board only. board is connected and has a compatible three-channel package loaded.</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">readout</span><span class="o">=</span><span class="n">classifier</span><span class="p">)</span>
+<span class="n">label_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+</section>
+<section id="encode-events-and-export-an-application">
+<h2>Encode events and export an application<a class="headerlink" href="#encode-events-and-export-an-application" title="Link to this heading">#</a></h2>
+<p>This CPU example puts three raw events into a two-bin, one-row window. Two
+identical events merge into one event at timestep 0. Event times share the
+unit used by the preprocessing window.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="spikepress.encode_events">
+<span class="sig-name descname"><span class="pre">encode_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessing</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.encode_events" title="Link to this definition">#</a></dt>
+<dd><p>C binning: [time,y,x,channel] to binary [1,T,C,H,W], no dropped events.</p>
+<p>Times use the caller’s explicit unit and [start,end) window. Duplicate
+events in one bin use binary OR. Missing native code raises; no fallback.</p>
+</dd></dl>
+
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Conv2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.sparse_event_training</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseEventTrainingPreset</span>
+
+<span class="n">preprocessing</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;uniform_binary_or&quot;</span><span class="p">,</span> <span class="n">window_start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                     <span class="n">window_end</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">timesteps</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">shape_hwc</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+<span class="n">raw_events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">encoded</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">encode_events</span><span class="p">(</span><span class="n">raw_events</span><span class="p">,</span> <span class="n">preprocessing</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">encoded</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># B,T,C,H,W</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id2">
+<img alt="Two duplicate events at time zero become one event in bin zero. The event at time 1.5 goes to bin one." src="../_images/event-encoding.png" />
+<figcaption>
+<p><span class="caption-text">Each point carries a position and channel. Duplicate events within a bin merge by OR.</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<dl class="py function">
+<dt class="sig sig-object py" id="spikepress.export_deployment">
+<span class="sig-name descname"><span class="pre">export_deployment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temporal_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.export_deployment" title="Link to this definition">#</a></dt>
+<dd><p>Bundle an existing .spm and explicit mean head in a fresh directory.</p>
+<p>manifest.json is written last; an incomplete directory is not an export.
+Hashes establish consistency, not authenticity or hardware attestation.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.Deployment">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Deployment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.Deployment" title="Link to this definition">#</a></dt>
@@ -437,6 +540,14 @@ and export controls.</p>
 <dt class="sig sig-object py" id="spikepress.Deployment.encode">
 <span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.Deployment.encode" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spikepress.Deployment.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">board</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.Deployment.load" title="Link to this definition">#</a></dt>
+<dd><p>Explicitly load this admitted snapshot through the existing Board API.</p>
+<p>This performs hardware I/O on a real board and needs that operation’s
+authority. It never retries or clears a faulted session.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="spikepress.Deployment.run">
@@ -452,24 +563,80 @@ and export controls.</p>
 host context only; neither frame form attests which hardware was run.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="spikepress.Deployment.report">
+<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.Deployment.report" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="spikepress.encode_events">
-<span class="sig-name descname"><span class="pre">encode_events</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessing</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_library</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.encode_events" title="Link to this definition">#</a></dt>
-<dd><p>C binning: [time,y,x,channel] to binary [1,T,C,H,W], no dropped events.</p>
-<p>Times use the caller’s explicit unit and [start,end) window. Duplicate
-events in one bin use binary OR. Missing native code raises; no fallback.</p>
-</dd></dl>
+<p>Export into a directory that does not yet exist. The bundle binds input
+encoding, the saved package, and a host head with labels. This identity
+backbone and head use synthetic weights.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryDirectory</span>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="spikepress.export_deployment">
-<span class="sig-name descname"><span class="pre">export_deployment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">head_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preprocessing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temporal_weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.export_deployment" title="Link to this definition">#</a></dt>
-<dd><p>Bundle an existing .spm and explicit mean head in a fresh directory.</p>
-<p>manifest.json is written last; an incomplete directory is not an export.
-Hashes establish consistency, not authenticity or hardware attestation.</p>
-</dd></dl>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Conv2d</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+               <span class="n">preset</span><span class="o">=</span><span class="n">SparseEventTrainingPreset</span><span class="p">(</span><span class="n">timesteps</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">weight</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">8</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">threshold</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+<span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example</span><span class="p">)</span>
 
+<span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">workspace</span><span class="p">:</span>
+    <span class="n">directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">workspace</span><span class="p">)</span>
+    <span class="n">artifact</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">directory</span> <span class="o">/</span> <span class="s2">&quot;app&quot;</span>
+    <span class="n">spikepress</span><span class="o">.</span><span class="n">export_deployment</span><span class="p">(</span>
+        <span class="n">artifact</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">head_weight</span><span class="o">=</span><span class="p">[[</span><span class="mf">1.</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span><span class="p">],</span>
+        <span class="n">head_bias</span><span class="o">=</span><span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">],</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;inactive&quot;</span><span class="p">],</span>
+        <span class="n">preprocessing</span><span class="o">=</span><span class="n">preprocessing</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">Deployment</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">raw_events</span><span class="p">),</span> <span class="n">encoded</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">app</span><span class="o">.</span><span class="n">report</span><span class="p">()[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[</span><span class="s2">&quot;active&quot;</span><span class="p">,</span> <span class="s2">&quot;inactive&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id3">
+<img alt="Raw event coordinates are encoded into binary bins, run through the loaded model and scored by the saved head to return a label." src="../_images/application-flow.png" />
+<figcaption>
+<p><span class="caption-text">The application binds preprocessing, model and head to the same input and output geometry.</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="run-an-exported-bundle-on-a-board">
+<h3>Run an exported bundle on a board<a class="headerlink" href="#run-an-exported-bundle-on-a-board" title="Link to this heading">#</a></h3>
+<p>For a persistent, target-matched bundle, follow the export procedure in
+<a class="reference internal" href="../deploy.html"><span class="std std-doc">application deployment</span></a>. Load the application before running
+it. <code class="docutils literal notranslate"><span class="pre">top_k</span></code> ranks the host scores, and softmax is optional.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">Deployment</span><span class="p">(</span><span class="s2">&quot;runs/first-app/application&quot;</span><span class="p">)</span>
+<span class="n">raw_events</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;runs/first-app/raw_events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+                        <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">board</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">board</span><span class="p">,</span> <span class="n">raw_events</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">postprocess</span><span class="o">=</span><span class="s2">&quot;softmax&quot;</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;top_k&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="classify-a-captured-frame">
+<h3>Classify a captured frame<a class="headerlink" href="#classify-a-captured-frame" title="Link to this heading">#</a></h3>
+<p>Use the same application and window tag as the original capture. Save the
+complete raw result frame as a one-dimensional uint32 NumPy file. This
+example consumes those raw words and runs the host head offline.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress</span><span class="w"> </span><span class="kn">import</span> <span class="n">Deployment</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Deployment</span><span class="p">(</span><span class="s2">&quot;runs/first-app/application&quot;</span><span class="p">)</span>
+<span class="n">words</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;frame-17.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">words</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;logits&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
 </section>
 </section>
 
@@ -511,22 +678,29 @@ Hashes establish consistency, not authenticity or hardware attestation.</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.spike_count"><code class="docutils literal notranslate"><span class="pre">spike_count()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.spike_rate"><code class="docutils literal notranslate"><span class="pre">spike_rate()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.first_spike"><code class="docutils literal notranslate"><span class="pre">first_spike()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.population_count"><code class="docutils literal notranslate"><span class="pre">population_count()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.global_average"><code class="docutils literal notranslate"><span class="pre">global_average()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.Classifier"><code class="docutils literal notranslate"><span class="pre">Classifier</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bind-preprocessing-model-and-labels">Bind preprocessing, model and labels</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment"><code class="docutils literal notranslate"><span class="pre">Deployment</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.encode"><code class="docutils literal notranslate"><span class="pre">Deployment.encode()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.run"><code class="docutils literal notranslate"><span class="pre">Deployment.run()</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.classify"><code class="docutils literal notranslate"><span class="pre">Deployment.classify()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reduce-a-spike-window">Reduce a spike window</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.spike_count"><code class="docutils literal notranslate"><span class="pre">spike_count()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.spike_rate"><code class="docutils literal notranslate"><span class="pre">spike_rate()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.first_spike"><code class="docutils literal notranslate"><span class="pre">first_spike()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.population_count"><code class="docutils literal notranslate"><span class="pre">population_count()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.global_average"><code class="docutils literal notranslate"><span class="pre">global_average()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.linear"><code class="docutils literal notranslate"><span class="pre">linear()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.readout.Classifier"><code class="docutils literal notranslate"><span class="pre">Classifier</span></code></a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#encode-events-and-export-an-application">Encode events and export an application</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.encode_events"><code class="docutils literal notranslate"><span class="pre">encode_events()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.export_deployment"><code class="docutils literal notranslate"><span class="pre">export_deployment()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment"><code class="docutils literal notranslate"><span class="pre">Deployment</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.encode"><code class="docutils literal notranslate"><span class="pre">Deployment.encode()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.load"><code class="docutils literal notranslate"><span class="pre">Deployment.load()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.run"><code class="docutils literal notranslate"><span class="pre">Deployment.run()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.classify"><code class="docutils literal notranslate"><span class="pre">Deployment.classify()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Deployment.report"><code class="docutils literal notranslate"><span class="pre">Deployment.report()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#run-an-exported-bundle-on-a-board">Run an exported bundle on a board</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#classify-a-captured-frame">Classify a captured frame</a></li>
 </ul>
 </li>
 </ul>

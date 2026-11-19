@@ -441,11 +441,94 @@ includes runner rebinding and intermediate hardware cuts.</p>
 
 </dd></dl>
 
+<section id="connect-load-and-run-on-a-board">
+<h2>Connect, load and run on a board<a class="headerlink" href="#connect-load-and-run-on-a-board" title="Link to this heading">#</a></h2>
+<p><strong>Board only.</strong> First follow the <a class="reference internal" href="../board.html"><span class="std std-doc">board walkthrough</span></a> to export and
+transfer <code class="docutils literal notranslate"><span class="pre">model.spm</span></code> and <code class="docutils literal notranslate"><span class="pre">events.npy</span></code>, install the matching package, and load the
+matching overlay. This example uses the walkthrough’s bounded resident event
+model and its included image. It assumes the overlay is already loaded;
+<code class="docutils literal notranslate"><span class="pre">program=True</span></code> explicitly programs it when that operation is authorized. The
+context manager calls <code class="docutils literal notranslate"><span class="pre">close()</span></code> even if the body raises an exception.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;spikepress-demo&quot;</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+                        <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;window_tag&quot;</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;spikes&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>The tag identifies the window, not a prediction. With <code class="docutils literal notranslate"><span class="pre">window_tag=None</span></code>, tags
+advance automatically and wrap at 65535. The included image’s inference-only
+mode does not establish energy or measured PL latency. On a fault, follow the
+recovery guide rather than retrying automatically.</p>
+<figure class="align-default" id="id1">
+<img alt="Prepare one owned input snapshot, run it twice, and decode a fresh result from each execution." src="../_images/runtime-workflow.png" />
+<figcaption>
+<p><span class="caption-text">A prepared input can be reused while its model remains loaded.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<section id="reuse-dense-output-streaming-and-batches">
+<h3>Reuse, dense output, streaming and batches<a class="headerlink" href="#reuse-dense-output-streaming-and-batches" title="Link to this heading">#</a></h3>
+<p><strong>Board only.</strong> In a new session with the same compatible fixture, the following
+operations illustrate different input and output paths. A prepared handle is a
+snapshot owned by this board and model load: each run executes again, and
+reload, close or fault invalidates it. Dense decoding returns a float64 binary tensor and requires one resident,
+bounded v12 event package with native event support. Streaming yields ordered
+results and must be exhausted or closed before another board operation. Batches
+contain one to four windows; explicit tags must be unique within the batch.
+Hybrid programs do not support streaming or batching.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;spikepress-demo&quot;</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+                        <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">prepare_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">second</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
+    <span class="n">dense</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run_dense</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dense</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># B, T, C, H, W</span>
+    <span class="n">stream</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run_stream</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;window_tag&quot;</span><span class="p">])</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run_batch</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">],</span> <span class="n">window_tags</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;window_tag&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Use distinct windows in a real stream or batch; the repeated fixture here makes
+the call shape reproducible. <code class="docutils literal notranslate"><span class="pre">run_dense</span></code> returns an <code class="docutils literal notranslate"><span class="pre">events</span></code> array and terminal
+status, while ordinary <code class="docutils literal notranslate"><span class="pre">run</span></code> results use the mapping described below.</p>
+</section>
+</section>
 <section id="result-records">
 <h2>Result records<a class="headerlink" href="#result-records" title="Link to this heading">#</a></h2>
 <p>Ordinary results are mappings. Optional fields depend on the path/profile;
 do not interpret a missing measurement as zero. A faulted terminal is rejected
-by the normal runner rather than returned as a successful inference.</p>
+by the normal runner rather than returned as a successful inference. The
+following synthetic CPU example shows the shape of <code class="docutils literal notranslate"><span class="pre">InferenceResult</span></code>, its
+<code class="docutils literal notranslate"><span class="pre">TerminalStatus</span></code>, and a <code class="docutils literal notranslate"><span class="pre">SpikeRecord</span></code>; its numbers are illustrative, not board
+measurements.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.results</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceResult</span><span class="p">,</span> <span class="n">SpikeRecord</span><span class="p">,</span> <span class="n">TerminalStatus</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spike</span> <span class="o">=</span> <span class="n">SpikeRecord</span><span class="p">(</span><span class="n">global_address</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">timestep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">terminal</span> <span class="o">=</span> <span class="n">TerminalStatus</span><span class="p">(</span><span class="n">faulted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">execution_cycles</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">InferenceResult</span><span class="p">(</span><span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">spikes</span><span class="o">=</span><span class="p">[</span><span class="n">spike</span><span class="p">],</span> <span class="n">terminal</span><span class="o">=</span><span class="n">terminal</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;spikes&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;timestep&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;terminal&quot;</span><span class="p">][</span><span class="s2">&quot;faulted&quot;</span><span class="p">]</span>
+<span class="go">(1, False)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;measurement_valid&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="go">True</span>
+</pre></div>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="spikepress.results.InferenceResult">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">InferenceResult</span></span><a class="headerlink" href="#spikepress.results.InferenceResult" title="Link to this definition">#</a></dt>
@@ -520,6 +603,10 @@ by the normal runner rather than returned as a successful inference.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Board.run_stream"><code class="docutils literal notranslate"><span class="pre">Board.run_stream()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Board.run_batch"><code class="docutils literal notranslate"><span class="pre">Board.run_batch()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.Board.close"><code class="docutils literal notranslate"><span class="pre">Board.close()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#connect-load-and-run-on-a-board">Connect, load and run on a board</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reuse-dense-output-streaming-and-batches">Reuse, dense output, streaming and batches</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#result-records">Result records</a><ul class="visible nav section-nav flex-column">

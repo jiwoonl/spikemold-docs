@@ -401,6 +401,156 @@ contents and completion limits.</p>
 <p>For the included image, use another new output directory and add
 <code class="docutils literal notranslate"><span class="pre">--bitstream</span> <span class="pre">bitstreams/pynq-z2/spikemold.bit</span></code>. Its matching HWH and profile
 sidecar must be present. Selecting the profile does not program a board.</p>
+<section id="train-on-a-gpu">
+<h2>Train on a GPU<a class="headerlink" href="#train-on-a-gpu" title="Link to this heading">#</a></h2>
+<p>For a CUDA-capable workstation, install a <a class="reference external" href="https://pytorch.org/get-started/locally/">PyTorch CUDA build</a>
+that matches your NVIDIA driver. Confirm the device before starting training:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name() if torch.cuda.is_available() else &quot;CPU only&quot;)&#39;</span>
+</pre></div>
+</div>
+<p>The following example runs two training updates with a synthetic binary
+input. It uses CUDA when available. Move the model to its device before
+constructing the optimizer, and keep each input and target on that same
+device.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">LIFConv2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.sparse_event_training</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseEventTrainingPreset</span>
+
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">preset</span> <span class="o">=</span> <span class="n">SparseEventTrainingPreset</span><span class="p">(</span><span class="n">timesteps</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">LIFConv2d</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">decay_shift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">preset</span><span class="o">=</span><span class="n">preset</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">collect_activity</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="n">events</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="n">target_rate</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">(</span><span class="n">set_to_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">rate</span><span class="p">,</span> <span class="n">target_rate</span><span class="p">)</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">: final training loss </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">export_model</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+<span class="n">export_input</span> <span class="o">=</span> <span class="n">events</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>  <span class="c1"># one window, B=1, still T=4</span>
+</pre></div>
+</div>
+<p>For a real dataset, the loader supplies the windows and targets. If transfer
+time matters, use a pinned-memory DataLoader on CUDA and transfer batches
+with <code class="docutils literal notranslate"><span class="pre">.to(device,</span> <span class="pre">non_blocking=True)</span></code>. Start with a batch that fits GPU memory
+and measure throughput. Use the CPU evaluation copy and representative
+batch-1 input in the preparation and export workflow below. The standalone
+CPU workflow above also checks package export and step-boundary resumption.</p>
+</section>
+<section id="cpu-and-gpu-training-by-batch-size">
+<h2>CPU and GPU training by batch size<a class="headerlink" href="#cpu-and-gpu-training-by-batch-size" title="Link to this heading">#</a></h2>
+<p>These synthetic FP32 tests compare an IFLinear 8→8 layer and a two-layer
+3×3 Conv/LIF network (8→16→16, 16×16 spatial input). Both use four timesteps
+and a fixed binary input. They ran on an AMD Threadripper 3960X and RTX 3080
+with PyTorch 2.10.0+cu130. Both CPU paths use one PyTorch thread. The optional
+C path sets <code class="docutils literal notranslate"><span class="pre">native_multistep=True</span></code> and checks that each layer used it.
+PyTorch reported AVX2 CPU dispatch. SIMD usage inside the individual kernels
+was not profiled.</p>
+<p>Each timed step includes zeroing gradients, forward, loss, backward and SGD
+with momentum. Inputs were already on their device, and each CUDA step
+synchronized before timing stopped. The table shows median milliseconds per
+step across ten samples after three warmups.</p>
+<figure class="align-default" id="id1">
+<img alt="The CPU is faster for the tiny linear example at all tested batch sizes. The RTX 3080 is faster on spatial Conv/LIF at batch sizes eight through 128." src="_images/training-devices.png" />
+<figcaption>
+<p><span class="caption-text">Step latency on the two example networks. Vertical scales differ between panels.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+<p><strong>IFLinear 8→8</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Batch</p></th>
+<th class="head text-right"><p>CPU eager</p></th>
+<th class="head text-right"><p>CPU with C recurrence</p></th>
+<th class="head text-right"><p>CUDA eager</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1.36</p></td>
+<td class="text-right"><p>1.11</p></td>
+<td class="text-right"><p>3.70</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>8</p></td>
+<td class="text-right"><p>1.94</p></td>
+<td class="text-right"><p>1.57</p></td>
+<td class="text-right"><p>3.59</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>32</p></td>
+<td class="text-right"><p>1.90</p></td>
+<td class="text-right"><p>1.54</p></td>
+<td class="text-right"><p>3.64</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>128</p></td>
+<td class="text-right"><p>2.02</p></td>
+<td class="text-right"><p>1.68</p></td>
+<td class="text-right"><p>3.68</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Two spatial Conv/LIF layers</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>Batch</p></th>
+<th class="head text-right"><p>CPU eager</p></th>
+<th class="head text-right"><p>CPU with C recurrence</p></th>
+<th class="head text-right"><p>CUDA eager</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>4.68</p></td>
+<td class="text-right"><p>4.05</p></td>
+<td class="text-right"><p>7.57</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>8</p></td>
+<td class="text-right"><p>9.75</p></td>
+<td class="text-right"><p>11.19</p></td>
+<td class="text-right"><p>7.20</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>32</p></td>
+<td class="text-right"><p>26.39</p></td>
+<td class="text-right"><p>31.01</p></td>
+<td class="text-right"><p>5.99</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>128</p></td>
+<td class="text-right"><p>100.56</p></td>
+<td class="text-right"><p>126.11</p></td>
+<td class="text-right"><p>7.25</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For the tiny linear model the CPU was faster at all four batch sizes.
+C recurrence reduced its median step time by 17–19%. For the spatial model,
+CUDA was faster from batch 8 onward. At batch 128, CUDA was about 14× faster
+than CPU eager (about 17,650 vs. 1,270 samples/s). C recurrence helped the
+spatial case at batch 1, while CPU eager was faster at larger batches.
+Changing recurrence alone does not accelerate the convolution or guarantee
+better throughput.</p>
+<p>These timings exclude data loading, transfers, export, and compilation.
+They use a single CPU thread and eager CUDA. For your model, measure with
+your loader, CPU thread count, and available GPU memory. Run the diagnostic
+from a source checkout with CUDA-enabled PyTorch and the C extension:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>tools/benchmark_training_devices.py<span class="w"> </span>--native-cpu
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--workload</span> <span class="pre">linear</span></code> or <code class="docutils literal notranslate"><span class="pre">--workload</span> <span class="pre">spatial</span></code> to measure one model.
+The <a class="reference download internal" download="" href="_downloads/e36d1f8f394f16c3429fb6b305f68cab/training-device-benchmark.json"><span class="xref download myst">measurement JSON</span></a> includes the
+individual timings and hardware/software settings. On shared machines,
+check for active jobs and acquire the GPU’s resource lock before benchmarking.</p>
+</section>
 <section id="prepare-a-temporal-model">
 <h2>Prepare a temporal model<a class="headerlink" href="#prepare-a-temporal-model" title="Link to this heading">#</a></h2>
 <p>Native layers use PyTorch modules, autograd and optimizers. Set
@@ -553,6 +703,8 @@ not a generic post-training converter. See <a class="reference internal" href="o
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#train-on-a-gpu">Train on a GPU</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cpu-and-gpu-training-by-batch-size">CPU and GPU training by batch size</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prepare-a-temporal-model">Prepare a temporal model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#record-training-metrics">Record training metrics</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#select-multi-step-execution">Select multi-step execution</a></li>

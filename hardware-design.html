@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>SpikeMold hardware design &#8212; SpikePress 1.0.0rc1</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=cdd23728"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware-design';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Supported operations" href="support.html" />
+    <link rel="prev" title="Choose a compatible deployment" href="compatibility.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.0.0rc1" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">SpikePress 1.0.0rc1</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="getting-started.html">
+    Get started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="training-guide.html">
+    Training
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="deployment-guide.html">
+    Deployment
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="api/index.html">
+    Python API
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/jiwoonl/SpikeMold" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="compatibility.html">Choose a compatible deployment</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">SpikeMold hardware design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Supported operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="deploy.html">Deploy an event application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readout.html">Terminal host classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="resident.html">Packages and model loading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="results.html">Performance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Common questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recovery.html">Runtime failure and ownership contract</a></li>
+<li class="toctree-l1"><a class="reference internal" href="board.html">Deploy on PYNQ-Z2</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="deployment-guide.html" class="nav-link">Deployment</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">SpikeMold hardware design</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="spikemold-hardware-design">
+<h1>SpikeMold hardware design<a class="headerlink" href="#spikemold-hardware-design" title="Link to this heading">#</a></h1>
+<p>SpikeMold runs compiled spiking neural networks on the programmable logic
+(PL) of a PYNQ-Z2. The ARM processing system (PS) prepares each input,
+configures the accelerator and reads the result. The PL schedules the
+layers, tiles and timesteps and performs the sparse neuron updates. This
+guide describes the 100 MHz image included with the SDK.</p>
+<p>Vivado generates <code class="docutils literal notranslate"><span class="pre">design_1_wrapper</span></code> as the top for this image. It contains
+the Zynq processing system, AXI interconnect, DMA, and <code class="docutils literal notranslate"><span class="pre">sparse_board_top</span></code>.
+The accelerator instantiates <code class="docutils literal notranslate"><span class="pre">sparse_stage_top</span></code> as its execution engine.
+See <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/history.md#retired-four-stage-board-overlay">historical experiments</a> for
+the retired four-stage overlay.</p>
+<section id="board-datapath">
+<h2>Board datapath<a class="headerlink" href="#board-datapath" title="Link to this heading">#</a></h2>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>ARM runtime
+  |-- AXI-Lite --&gt; SpikeMold control registers and DMA setup
+  `-- Packed binary events --&gt; shared DDR
+                                  |
+                       SpikeMold AXI input replay
+                                  |
+                     Row unpacker and scheduler
+                                  |
+                 Weight lookup and neuron-state update
+                                  |
+                         Spike output assembly
+                                  |
+                   Result AXI-Stream --&gt; S2MM DMA
+                                             |
+                                     Shared DDR --&gt; ARM runtime
+</pre></div>
+</div>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Interface</p></th>
+<th class="head"><p>What it carries</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PS GP0 to AXI-Lite</p></td>
+<td><p>Model control words, descriptors, buffer addresses, START and status. The same PS port configures the result DMA.</p></td>
+</tr>
+<tr class="row-odd"><td><p>SpikeMold 64-bit AXI master to PS HP1</p></td>
+<td><p>Input reads and, for plans that use DDR between stages, intermediate stream writes and reads. The accelerator’s AXI interface advertises one outstanding read and one outstanding write.</p></td>
+</tr>
+<tr class="row-even"><td><p>32-bit result AXI-Stream to S2MM DMA</p></td>
+<td><p>The result frame. S2MM means stream to memory-mapped, so this DMA writes the result into shared DDR through HP1. Input replay uses the accelerator’s AXI master.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The PS supplies the 100 MHz PL clock through FCLK0. The <code class="docutils literal notranslate"><span class="pre">.hwh</span></code> file
+describes the block design and the <code class="docutils literal notranslate"><span class="pre">.profile.json</span></code> sidecar binds the
+bitstream and its runtime contract. See <a class="reference internal" href="compatibility.html"><span class="std std-doc">image selection</span></a>.</p>
+</section>
+<section id="what-happens-during-a-window">
+<h2>What happens during a window<a class="headerlink" href="#what-happens-during-a-window" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Load the execution plan.</strong> The compiler packages layer geometry, weight
+and threshold data, and the schedule in a <code class="docutils literal notranslate"><span class="pre">.spm</span></code>. On the board, the runtime
+checks the package against the image and publishes configuration through
+the control interface. See <a class="reference internal" href="resident.html"><span class="std std-doc">packages and model loading</span></a>.</p></li>
+<li><p><strong>Replay sparse rows.</strong> The runtime writes packed binary events to DDR.
+The input selector has four entries for the buffers used by tiled passes.
+Replay fetches the selected stream in bursts. The unpacker emits PAGE
+records for events and WATERMARK records for row progress, including empty
+rows. The scheduler uses this progress to decide which rows can run.</p></li>
+<li><p><strong>Apply event updates.</strong> The frontend looks up packed signed INT4 weights
+for active events. It selects and adds weight contributions for groups of
+eight output channels. The state core stores INT16 membrane values in four
+banks. It applies configured arithmetic-shift decay and saturating
+additions in the required update order. Committing a threshold crossing
+emits a spike and resets that neuron to zero.</p></li>
+<li><p><strong>Move between stages.</strong> Compact stages use on-chip row queues where the
+plan permits. At a DDR stage boundary, the PL packs and spools intermediate
+rows, then fetches them for the next stage. The hardware also schedules
+supported binary pooling and spatial tiles. The state-vector depth and
+touch FIFO depth are each 8,192 entries in this image. The admitted spatial
+tile limit is four. Geometry and other limits also apply. See
+<a class="reference internal" href="preflight.html"><span class="std std-doc">preflight</span></a> and <a class="reference internal" href="support.html"><span class="std std-doc">supported operations</span></a>.</p></li>
+<li><p><strong>Return the result.</strong> The result path frames the terminal spikes and
+streams them to the receive DMA. The runtime checks device completion,
+DMA completion and result identity before decoding the output. An
+application can apply a host classifier to the decoded spikes. See
+<a class="reference internal" href="inputs.html"><span class="std std-doc">input and result formats</span></a> and <a class="reference internal" href="deploy.html"><span class="std std-doc">application deployment</span></a>.</p></li>
+</ol>
+</section>
+<section id="ordering-and-fault-handling">
+<h2>Ordering and fault handling<a class="headerlink" href="#ordering-and-fault-handling" title="Link to this heading">#</a></h2>
+<p>Inside the PL, a transfer takes place on a cycle with both <code class="docutils literal notranslate"><span class="pre">valid</span></code> and <code class="docutils literal notranslate"><span class="pre">ready</span></code>
+asserted. Buffers let producers hold data when the next block stalls. Updates
+to the same state retain their defined order because saturating after each
+update can change the result. The core can issue independent updates in
+parallel where the bank and ordering rules permit.</p>
+<p>A validation fault blocks the affected transaction from publishing invalid
+data and records the first fault. The control path stops new work and tracks
+outstanding memory traffic through drain or recovery. A runtime timeout or
+fault can leave DMA ownership uncertain. Follow <a class="reference internal" href="recovery.html"><span class="std std-doc">runtime recovery</span></a>.</p>
+</section>
+<section id="implementation-and-evidence">
+<h2>Implementation and evidence<a class="headerlink" href="#implementation-and-evidence" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Evidence</p></th>
+<th class="head"><p>Result for the included image</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Routed implementation</p></td>
+<td><p>Zynq-7020 (<code class="docutils literal notranslate"><span class="pre">xc7z020clg400-1</span></code>), Vivado 2025.2, 10 ns clock constraint. Worst setup slack +0.002 ns and worst hold slack +0.010 ns, with zero failing endpoints and zero routing errors.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Routed resources</p></td>
+<td><p>37,020 LUTs, 34,983 flip-flops, 70.5 BRAM36 equivalents and 0 DSP blocks.</p></td>
+</tr>
+<tr class="row-even"><td><p>Native RTL simulation</p></td>
+<td><p>Selected CIFAR and DVS fixtures each matched 32,768 golden output words.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Board functional inference</p></td>
+<td><p>The saved-input campaign covered 15 models. Its reported latency includes ARM and PL execution. See <a class="reference internal" href="results.html"><span class="std std-doc">measured results</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The included image uses <code class="docutils literal notranslate"><span class="pre">unmeasured_inference=True</span></code> because its hardware
+measurement observer does not provide valid sessions. PL-only latency,
+electrical energy and full-dataset FPGA accuracy remain unmeasured for this
+image. See <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/r114.md">deployment qualification</a>.</p>
+<p>For the exact selected RTL, generics and read order, use the image’s
+<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/68a9b0d24eb51d3425a0f889a975332d02380288/bitstreams/pynq-z2/provenance/SOURCES.json">source inventory</a>.
+Start with <code class="docutils literal notranslate"><span class="pre">sparse_board_top</span></code> for the AXI and result interfaces,
+<code class="docutils literal notranslate"><span class="pre">sparse_stage_top</span></code> for execution, <code class="docutils literal notranslate"><span class="pre">sparse_row_exec</span></code> for row processing and
+<code class="docutils literal notranslate"><span class="pre">compact_if_slice</span></code> for the weight and state path. The
+<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/432395410651046947a76f455a33fd18bcef0579/experiments/R15-100MHZ-20261111/CLOSURE-100MHZ-20261114/candidate-r114/BUILD_RESULT.md">implementation record</a>
+contains the routed resource report and reviewed timing exceptions. These
+source and build records require repository access.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="compatibility.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Choose a compatible deployment</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="support.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Supported operations</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#board-datapath">Board datapath</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-happens-during-a-window">What happens during a window</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ordering-and-fault-handling">Ordering and fault handling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-and-evidence">Implementation and evidence</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

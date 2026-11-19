@@ -425,6 +425,33 @@ be asynchronous; synchronize explicitly when device timing is intended.</p>
 
 </dd></dl>
 
+<section id="record-and-read-a-cpu-training-log">
+<h2>Record and read a CPU training log<a class="headerlink" href="#record-and-read-a-cpu-training-log" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">update</span></code> emits the first step, every <code class="docutils literal notranslate"><span class="pre">every</span></code> steps and the last step. <code class="docutils literal notranslate"><span class="pre">summary</span></code>
+records metrics calculated by the caller. <code class="docutils literal notranslate"><span class="pre">phase</span></code> records host wall time;
+overlapping phases are not additive. <code class="docutils literal notranslate"><span class="pre">report_hardware</span></code> renders an existing
+preflight report and does not compile or access a board. The context manager
+calls <code class="docutils literal notranslate"><span class="pre">close</span></code>; a manually created monitor should also be closed. A log path
+must be new. This small example uses synthetic metrics, not measured accuracy.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">io</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">directory</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;training.jsonl&quot;</span>
+<span class="gp">... </span>    <span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">TrainingMonitor</span><span class="p">(</span><span class="n">every</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(),</span> <span class="n">log_path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">monitor</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">with</span> <span class="n">monitor</span><span class="o">.</span><span class="n">phase</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">):</span>
+<span class="gp">... </span>            <span class="n">emitted</span> <span class="o">=</span> <span class="p">[</span><span class="n">monitor</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="n">loss</span><span class="p">)</span> <span class="k">for</span> <span class="n">step</span><span class="p">,</span> <span class="n">loss</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)]]</span>
+<span class="gp">... </span>        <span class="n">monitor</span><span class="o">.</span><span class="n">summary</span><span class="p">(</span><span class="n">epoch</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">validation_loss</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="n">monitor</span><span class="o">.</span><span class="n">report_hardware</span><span class="p">({</span><span class="s2">&quot;schema&quot;</span><span class="p">:</span> <span class="s2">&quot;spikepress.model_preflight.v1&quot;</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;CLEAR&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;pynq-z2&quot;</span><span class="p">})</span>
+<span class="gp">... </span>    <span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">summarize_training_log</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">emitted</span><span class="p">,</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;last_training&quot;</span><span class="p">][</span><span class="s2">&quot;metrics&quot;</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;last_summary&quot;</span><span class="p">][</span><span class="s2">&quot;metrics&quot;</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">&quot;phases&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;status&quot;</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;hardware_records&quot;</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;completion&quot;</span><span class="p">])</span>
+<span class="go">[True, True, True] {&#39;loss&#39;: 0.4} {&#39;validation_loss&#39;: 0.7}</span>
+<span class="go">completed 1 UNKNOWN</span>
+</pre></div>
+</div>
+<p>The final recorded point is not necessarily the best or an average. Completion
+remains <code class="docutils literal notranslate"><span class="pre">UNKNOWN</span></code> even after <code class="docutils literal notranslate"><span class="pre">close</span></code>; retain a separate completion receipt.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="spikepress.summarize_training_log">
 <span class="sig-name descname"><span class="pre">summarize_training_log</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#spikepress.summarize_training_log" title="Link to this definition">#</a></dt>
@@ -434,6 +461,13 @@ incomplete, or unsupported records raise ValueError with their line number.
 The last points are the last records in file order, not averages or maxima.</p>
 </dd></dl>
 
+<figure class="align-default" id="id1">
+<img alt="The monitor records step metrics and phase timings in JSONL. The summary reads the latest metrics while completion stays unknown." src="../_images/training-monitor.png" />
+<figcaption>
+<p><span class="caption-text">The monitor records only the metrics and phases supplied by the training loop.</span><a class="headerlink" href="#id1" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
 <section id="native-recurrence">
 <h2>Native recurrence<a class="headerlink" href="#native-recurrence" title="Link to this heading">#</a></h2>
 <p>This low-level opt-in CPU function requires the matching native extension and
@@ -446,6 +480,23 @@ for dtype, shape, ABI and saturation restrictions.</p>
 <dd><p>Return spikes and final state with first-order reset/STE gradients only.</p>
 </dd></dl>
 
+<p>With the native extension installed, use <code class="docutils literal notranslate"><span class="pre">grid=False</span></code> for floating recurrence;
+<code class="docutils literal notranslate"><span class="pre">weight_scale</span></code> and <code class="docutils literal notranslate"><span class="pre">integer_threshold</span></code> are unused in that mode. The time axis
+is dimension 1. This example backpropagates through the final state on CPU:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.native_training</span><span class="w"> </span><span class="kn">import</span> <span class="n">multistep</span>
+
+<span class="n">integrated</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[[</span><span class="o">-</span><span class="mf">3.0</span><span class="p">]]],</span> <span class="p">[[[</span><span class="mf">0.0</span><span class="p">]]]]],</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">threshold</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">spikes</span><span class="p">,</span> <span class="n">final</span> <span class="o">=</span> <span class="n">multistep</span><span class="p">(</span><span class="n">integrated</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">final</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">final</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="o">-</span><span class="mf">1.5</span>
+<span class="k">assert</span> <span class="n">integrated</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>This is a recurrence example, not a training-quality or hardware result. For
+integer-grid mode, supply the compatible scale and integer threshold described
+in the execution guide.</p>
 </section>
 </section>
 
@@ -504,7 +555,10 @@ for dtype, shape, ABI and saturation restrictions.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.TrainingMonitor.close"><code class="docutils literal notranslate"><span class="pre">TrainingMonitor.close()</span></code></a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.summarize_training_log"><code class="docutils literal notranslate"><span class="pre">summarize_training_log()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#record-and-read-a-cpu-training-log">Record and read a CPU training log</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.summarize_training_log"><code class="docutils literal notranslate"><span class="pre">summarize_training_log()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#native-recurrence">Native recurrence</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spikepress.native_training.multistep"><code class="docutils literal notranslate"><span class="pre">multistep()</span></code></a></li>
 </ul>
