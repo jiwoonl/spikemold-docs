@@ -382,10 +382,9 @@
                   
   <section id="train-inspect-and-deploy-with-pytorch">
 <h1>Train, inspect and deploy with PyTorch<a class="headerlink" href="#train-inspect-and-deploy-with-pytorch" title="Link to this heading">#</a></h1>
-<p>Install the source checkout with Python 3.10+ and a suitable PyTorch build:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[compiler]&#39;</span>
-</pre></div>
-</div>
+<p>Follow the <a class="reference internal" href="setup.html"><span class="std std-doc">workstation installation guide</span></a>. Choose a CUDA-enabled
+PyTorch wheel for NVIDIA training, then install the compiler extra in the
+same environment.</p>
 <p>Run the synthetic CPU workflow in a new directory:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/training_workflow.py<span class="w"> </span>--output<span class="w"> </span>/tmp/spikepress-training-new
 spikepress<span class="w"> </span>training-report<span class="w"> </span>/tmp/spikepress-training-new/training.jsonl
@@ -403,11 +402,8 @@ contents and completion limits.</p>
 sidecar must be present. Selecting the profile does not program a board.</p>
 <section id="train-on-a-gpu">
 <h2>Train on a GPU<a class="headerlink" href="#train-on-a-gpu" title="Link to this heading">#</a></h2>
-<p>For a CUDA-capable workstation, install a <a class="reference external" href="https://pytorch.org/get-started/locally/">PyTorch CUDA build</a>
-that matches your NVIDIA driver. Confirm the device before starting training:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import torch; print(torch.cuda.is_available()); print(torch.cuda.get_device_name() if torch.cuda.is_available() else &quot;CPU only&quot;)&#39;</span>
-</pre></div>
-</div>
+<p>Run the <a class="reference internal" href="setup.html#install-and-verify-spikepress"><span class="std std-ref">CUDA verification example</span></a>
+before training to confirm that PyTorch can execute on your GPU.</p>
 <p>The following example runs two training updates with a synthetic binary
 input. It uses CUDA when available. Move the model to its device before
 constructing the optimizer, and keep each input and target on that same

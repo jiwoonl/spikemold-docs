@@ -382,11 +382,8 @@
 <p>This example runs entirely on a CPU. It creates a tiny native shift-LIF
 network with a nonzero binary input, compares PyTorch with an integer golden,
 and saves and reloads a deployment package. It does not connect to a board.</p>
-<p>From a source checkout, install a suitable PyTorch build and the compiler:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[compiler]&#39;</span>
-spikepress<span class="w"> </span>doctor<span class="w"> </span>--require<span class="w"> </span>compile
-</pre></div>
-</div>
+<p>Follow the <a class="reference internal" href="setup.html"><span class="std std-doc">workstation installation guide</span></a> to install PyTorch
+and SpikePress. Either the CUDA wheel or the CPU wheel can run this example.</p>
 <section id="run-the-complete-example-first">
 <h2>Run the complete example first<a class="headerlink" href="#run-the-complete-example-first" title="Link to this heading">#</a></h2>
 <p>After <a class="reference internal" href="setup.html"><span class="std std-doc">installation</span></a>, from the repository root:</p>
