@@ -406,7 +406,7 @@ choose your OS, <strong>Pip</strong>, <strong>Python</strong>, and a CUDA build 
 NVIDIA driver. Run the generated command inside <code class="docutils literal notranslate"><span class="pre">.venv</span></code>.</p>
 <p>For example, the training guide was checked with PyTorch 2.10.0 and CUDA 13.0
 on an RTX 3080. Use this example command if your driver supports CUDA 13.0:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;torch==2.10.0&#39;</span><span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu130
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'torch==2.10.0'</span><span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu130
 </pre></div>
 </div>
 <p>The prebuilt wheel supplies the CUDA runtime libraries it needs. Install a
@@ -416,7 +416,7 @@ CUDA code from source.</p>
 <section id="cpu-only-workstation">
 <h3>CPU-only workstation<a class="headerlink" href="#cpu-only-workstation" title="Link to this heading">#</a></h3>
 <p>On Linux x86-64, install the CPU wheel:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">&#39;torch==2.10.0&#39;</span><span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'torch==2.10.0'</span><span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
 </pre></div>
 </div>
 <p>For another OS or GPU backend, use the PyTorch selector to find the
@@ -426,19 +426,19 @@ were checked on NVIDIA CUDA.</p>
 </section>
 <section id="install-and-verify-spikepress">
 <h2>3. Install and verify SpikePress<a class="headerlink" href="#install-and-verify-spikepress" title="Link to this heading">#</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[compiler]&#39;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[compiler]'</span>
 python<span class="w"> </span>-m<span class="w"> </span>spikepress.cli<span class="w"> </span>doctor<span class="w"> </span>--require<span class="w"> </span>compile
 </pre></div>
 </div>
 <p>For the CUDA route, verify that PyTorch can allocate and execute on the GPU:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;&#39;PY&#39;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-<span class="w"> </span><span class="s">&lt;&lt;'PY'</span>
 <span class="s">import torch</span>
 
-<span class="s">print(&quot;PyTorch:&quot;, torch.__version__, &quot;| CUDA build:&quot;, torch.version.cuda)</span>
+<span class="s">print("PyTorch:", torch.__version__, "| CUDA build:", torch.version.cuda)</span>
 <span class="s">if not torch.cuda.is_available():</span>
-<span class="s">    raise SystemExit(&quot;CUDA unavailable. Check the selected wheel, NVIDIA driver, and GPU visibility.&quot;)</span>
-<span class="s">print(&quot;GPU:&quot;, torch.cuda.get_device_name(0))</span>
-<span class="s">assert (torch.ones(1, device=&quot;cuda&quot;) + 1).item() == 2</span>
+<span class="s">    raise SystemExit("CUDA unavailable. Check the selected wheel, NVIDIA driver, and GPU visibility.")</span>
+<span class="s">print("GPU:", torch.cuda.get_device_name(0))</span>
+<span class="s">assert (torch.ones(1, device="cuda") + 1).item() == 2</span>
 <span class="s">PY</span>
 </pre></div>
 </div>
@@ -451,7 +451,7 @@ below use CPU tensors in the same environment.</p>
 </section>
 <section id="check-the-native-examples">
 <h2>Check the native examples<a class="headerlink" href="#check-the-native-examples" title="Link to this heading">#</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;from spikepress.backends.pynq import _native_runtime, _native_mmio; print(&quot;native imports OK&quot;)&#39;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">'from spikepress.backends.pynq import _native_runtime, _native_mmio; print("native imports OK")'</span>
 python<span class="w"> </span>tools/check_bitstream_bundle.py
 python<span class="w"> </span>examples/compile_model.py<span class="w"> </span>--output<span class="w"> </span>runs/first-compile
 python<span class="w"> </span>-m<span class="w"> </span>spikepress.cli<span class="w"> </span>inspect<span class="w"> </span>runs/first-compile/model.spm
@@ -474,7 +474,7 @@ board. PyTorch is not required to run an exported package.</p>
 <p>The matching <code class="docutils literal notranslate"><span class="pre">.bit</span></code>, <code class="docutils literal notranslate"><span class="pre">.hwh</span></code> and <code class="docutils literal notranslate"><span class="pre">.profile.json</span></code> are in
 <code class="docutils literal notranslate"><span class="pre">bitstreams/pynq-z2/</span></code> and arrive with an ordinary clone or pull. Follow the
 <a class="reference internal" href="board.html"><span class="std std-doc">board walkthrough</span></a> to install on the board, export and transfer an
-input, program the included overlay, and compare the output. Programming and
+input, program the PYNQ-Z2 overlay, and compare the output. Programming and
 board operation require the applicable authorization. The runtime defaults
 to <code class="docutils literal notranslate"><span class="pre">program=False</span></code>; only omit programming when the matching overlay is
 already loaded.</p>

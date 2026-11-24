@@ -446,26 +446,23 @@ includes runner rebinding and intermediate hardware cuts.</p>
 <p><strong>Board only.</strong> First follow the <a class="reference internal" href="../board.html"><span class="std std-doc">board walkthrough</span></a> to export and
 transfer <code class="docutils literal notranslate"><span class="pre">model.spm</span></code> and <code class="docutils literal notranslate"><span class="pre">events.npy</span></code>, install the matching package, and load the
 matching overlay. This example uses the walkthrough’s bounded resident event
-model and its included image. It assumes the overlay is already loaded;
-<code class="docutils literal notranslate"><span class="pre">program=True</span></code> explicitly programs it when that operation is authorized. The
-context manager calls <code class="docutils literal notranslate"><span class="pre">close()</span></code> even if the body raises an exception.</p>
+model. Load the matching overlay before connecting, or set <code class="docutils literal notranslate"><span class="pre">program=True</span></code> to
+program it explicitly. The context manager closes the board on exit.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
 
-<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;spikepress-demo&quot;</span>
-<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"spikepress-demo"</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">"events.npy"</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span><span class="p">,</span>
                         <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
-    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">"model.spm"</span><span class="p">)</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;window_tag&quot;</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;spikes&quot;</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"window_tag"</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"spikes"</span><span class="p">]))</span>
 </pre></div>
 </div>
-<p>The tag identifies the window, not a prediction. With <code class="docutils literal notranslate"><span class="pre">window_tag=None</span></code>, tags
-advance automatically and wrap at 65535. The included image’s inference-only
-mode does not establish energy or measured PL latency. On a fault, follow the
-recovery guide rather than retrying automatically.</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">window_tag=None</span></code>, tags advance automatically and wrap after 65535.
+See <a class="reference internal" href="../results.html"><span class="std std-doc">measurement scope</span></a> and <a class="reference internal" href="../recovery.html"><span class="std std-doc">fault recovery</span></a>.</p>
 <figure class="align-default" id="id1">
 <img alt="Prepare one owned input snapshot, run it twice, and decode a fresh result from each execution." src="../_images/runtime-workflow.png" />
 <figcaption>
@@ -486,24 +483,24 @@ Hybrid programs do not support streaming or batching.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
 
-<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;spikepress-demo&quot;</span>
-<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"spikepress-demo"</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">"events.npy"</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span><span class="p">,</span>
                         <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
-    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">"model.spm"</span><span class="p">)</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">prepare_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
     <span class="n">first</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
     <span class="n">second</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">21</span><span class="p">)</span>
     <span class="n">dense</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run_dense</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">window_tag</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">dense</span><span class="p">[</span><span class="s2">&quot;events&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># B, T, C, H, W</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dense</span><span class="p">[</span><span class="s2">"events"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>  <span class="c1"># B, T, C, H, W</span>
     <span class="n">stream</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run_stream</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">])</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;window_tag&quot;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s2">"window_tag"</span><span class="p">])</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="n">batch</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run_batch</span><span class="p">([</span><span class="n">inputs</span><span class="p">,</span> <span class="n">inputs</span><span class="p">],</span> <span class="n">window_tags</span><span class="o">=</span><span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;window_tag&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">([</span><span class="n">item</span><span class="p">[</span><span class="s2">"window_tag"</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Use distinct windows in a real stream or batch; the repeated fixture here makes
@@ -523,9 +520,9 @@ measurements.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">spike</span> <span class="o">=</span> <span class="n">SpikeRecord</span><span class="p">(</span><span class="n">global_address</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">timestep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">terminal</span> <span class="o">=</span> <span class="n">TerminalStatus</span><span class="p">(</span><span class="n">faulted</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">execution_cycles</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">InferenceResult</span><span class="p">(</span><span class="n">window_tag</span><span class="o">=</span><span class="mi">17</span><span class="p">,</span> <span class="n">spikes</span><span class="o">=</span><span class="p">[</span><span class="n">spike</span><span class="p">],</span> <span class="n">terminal</span><span class="o">=</span><span class="n">terminal</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;spikes&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;timestep&quot;</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;terminal&quot;</span><span class="p">][</span><span class="s2">&quot;faulted&quot;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="p">[</span><span class="s2">"spikes"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"timestep"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"terminal"</span><span class="p">][</span><span class="s2">"faulted"</span><span class="p">]</span>
 <span class="go">(1, False)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;measurement_valid&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"measurement_valid"</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 <span class="go">True</span>
 </pre></div>
 </div>

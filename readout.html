@@ -401,8 +401,8 @@ precision/domain contract; see <a class="reference internal" href="execution.htm
 <span class="n">logits</span> <span class="o">=</span> <span class="n">readout</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span>
     <span class="n">result</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="n">head_weight</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">head_bias</span><span class="p">,</span>
     <span class="n">timesteps</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">output_shape_hwc</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>
-    <span class="n">state_base</span><span class="o">=</span><span class="n">final_layer</span><span class="p">[</span><span class="s2">&quot;state_base&quot;</span><span class="p">],</span>
-    <span class="n">state_limit</span><span class="o">=</span><span class="n">final_layer</span><span class="p">[</span><span class="s2">&quot;state_limit&quot;</span><span class="p">],</span>
+    <span class="n">state_base</span><span class="o">=</span><span class="n">final_layer</span><span class="p">[</span><span class="s2">"state_base"</span><span class="p">],</span>
+    <span class="n">state_limit</span><span class="o">=</span><span class="n">final_layer</span><span class="p">[</span><span class="s2">"state_limit"</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">prediction</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">argmax</span><span class="p">())</span>
 </pre></div>

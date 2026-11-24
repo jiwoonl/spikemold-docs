@@ -434,7 +434,7 @@
 </tbody>
 </table>
 </div>
-<p>Fixed beta need not be exactly representable during authoring, but must be lowered for deployment. The shift codebook is 1, 1/2, 1/4, 1/8, 1/16; shift 0 is IF. Learnable decay uses a projected shift during forward and is frozen by preparation. Export computes each threshold code as <code class="docutils literal notranslate"><span class="pre">clip(ceil(max(shadow,</span> <span class="pre">1/256)</span> <span class="pre">/</span> <span class="pre">weight_scale),</span> <span class="pre">1,</span> <span class="pre">32767)</span></code> in INT16. Preparation requires finite positive shadow thresholds; choosing a shadow value does not directly choose that integer code.</p>
+<p>Fixed beta need not be exactly representable during authoring, but must be lowered for deployment. Standard PYNQ-Z2 retention is 1, 1/2, 1/4, 1/8 and 1/16. Shift 0 is IF. The <a class="reference internal" href="../compatibility.html#retention-profiles"><span class="std std-ref">fractional candidate</span></a> uses a separate package contract. Learnable decay uses a projected shift during forward and is frozen by preparation. Export computes each threshold code as <code class="docutils literal notranslate"><span class="pre">clip(ceil(max(shadow,</span> <span class="pre">1/256)</span> <span class="pre">/</span> <span class="pre">weight_scale),</span> <span class="pre">1,</span> <span class="pre">32767)</span></code> in INT16. Preparation requires finite positive shadow thresholds; choosing a shadow value does not directly choose that integer code.</p>
 <p><code class="docutils literal notranslate"><span class="pre">MaxPool1d</span></code> and <code class="docutils literal notranslate"><span class="pre">MaxPool2d</span></code> (canonical <code class="docutils literal notranslate"><span class="pre">EventMaxPool1d</span></code> and <code class="docutils literal notranslate"><span class="pre">EventMaxPool2d</span></code>) accept <code class="docutils literal notranslate"><span class="pre">kernel_size=2</span></code>, <code class="docutils literal notranslate"><span class="pre">stride=2</span></code>, <code class="docutils literal notranslate"><span class="pre">padding=0</span></code>; each is a spatial count. The allowed K/S/P triples are 2/2/0, 3/1/1 and 3/2/1. 1D deployment lowering of K2/S2 requires an even input length. Their inputs use the corresponding 1D or 2D layouts above.</p>
 <p><code class="docutils literal notranslate"><span class="pre">Threshold</span></code> is the <code class="docutils literal notranslate"><span class="pre">EventIF</span></code> alias: <code class="docutils literal notranslate"><span class="pre">channels</span></code> is required and positive, and <code class="docutils literal notranslate"><span class="pre">threshold=1</span></code> is an integer threshold in [1, 32767], replicated over channels. It compares BC or BCHW current and produces the input dtype’s 0/1 values. This is a T=1 helper, not the learnable per-channel threshold above.</p>
 <section id="training-preset-and-recurrence-controls">
@@ -644,7 +644,7 @@ Matching shapes alone does not qualify a pretrained float model’s conversion.<
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmeasured_inference</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
-<td><p>Boolean. The included image requires <code class="docutils literal notranslate"><span class="pre">True</span></code> for inference-only observation; other targets reject <code class="docutils literal notranslate"><span class="pre">True</span></code>. This does not establish measured energy.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for PYNQ-Z2 functional inference.</p></td>
 </tr>
 </tbody>
 </table>
@@ -664,42 +664,6 @@ It does not convert an arbitrary training model or program an FPGA.</p>
 <section id="input-and-terminal-helpers">
 <h2>Input and terminal helpers<a class="headerlink" href="#input-and-terminal-helpers" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">EventReadout()</span></code> has no constructor parameters; its <code class="docutils literal notranslate"><span class="pre">inputs</span></code> must be a BCHW or BTCHW tensor, returned unchanged. <code class="docutils literal notranslate"><span class="pre">pack_event_features(inputs)</span></code> accepts BCHW and returns contiguous B,C×H×W,1,1 in row-major order; it does not infer or add a timestep. See <a class="reference internal" href="../inputs.html"><span class="std std-doc">input layouts</span></a> and <a class="reference internal" href="nn.html"><span class="std std-doc">native layers</span></a>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">DirectCurrentIF</span></code> and <code class="docutils literal notranslate"><span class="pre">DirectCurrentLIF</span></code> are reference primitives for fixed-scale current input; direct-current input is <strong>not enabled on the included deployment image</strong>. Their <code class="docutils literal notranslate"><span class="pre">inputs</span></code> are finite floating-point BCHW or BTCHW, with positive dimensions and matching C. BCHW is repeated for T steps; BTCHW must have the configured T. Each call starts with zero state, uses integer-equivalent current quantization and reset-zero spikes, and returns B,T,C,H,W. Quantization that would saturate INT16 is rejected.</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Parameter</p></th>
-<th class="head"><p>Default</p></th>
-<th class="head"><p>Meaning and constraints</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">channels</span></code></p></td>
-<td><p>required</p></td>
-<td><p>Positive integer input channel count.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timesteps</span></code></p></td>
-<td><p>required</p></td>
-<td><p>Integer T in [1, 64], steps per forward window.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scale</span></code></p></td>
-<td><p>required</p></td>
-<td><p>Positive finite current units per integer code; current is divided by scale and rounded half away from zero.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
-<td><p>Integer threshold code in [1, 32767], shared initially across channels.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">decay_shift</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">0</span></code> (IF), <code class="docutils literal notranslate"><span class="pre">None</span></code> (LIF)</p></td>
-<td><p>Exact integer 0–4 with retention 2^(-shift); IF requires 0. LIF requires this or <code class="docutils literal notranslate"><span class="pre">decay</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">decay</span></code> (LIF)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>Exact retention in {1, 1/2, 1/4, 1/8, 1/16}; if supplied with <code class="docutils literal notranslate"><span class="pre">decay_shift</span></code>, they must agree.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
 </section>
 <section id="training-progress">
 <h2>Training progress<a class="headerlink" href="#training-progress" title="Link to this heading">#</a></h2>
@@ -814,7 +778,7 @@ It does not convert an arbitrary training model or program an FPGA.</p>
 </tbody>
 </table>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">export_deployment(artifact,</span> <span class="pre">destination,</span> <span class="pre">*,</span> <span class="pre">head_weight,</span> <span class="pre">head_bias,</span> <span class="pre">labels,</span> <span class="pre">preprocessing,</span> <span class="pre">reduction=&quot;mean&quot;,</span> <span class="pre">time_bins=None,</span> <span class="pre">grid=None,</span> <span class="pre">temporal_weights=None)</span></code> writes a new application directory. <code class="docutils literal notranslate"><span class="pre">artifact</span></code> is an existing compatible <code class="docutils literal notranslate"><span class="pre">.spm</span></code> path and <code class="docutils literal notranslate"><span class="pre">destination</span></code> must not exist. Application export supports binary event packages under its admitted contract, not direct-current input or count-mode output. <code class="docutils literal notranslate"><span class="pre">head_weight</span></code> is a finite numeric [classes,features] matrix, <code class="docutils literal notranslate"><span class="pre">head_bias</span></code> a finite [classes] vector, and <code class="docutils literal notranslate"><span class="pre">labels</span></code> a list or tuple of distinct nonempty strings, one per class. The head is stored as float64. <code class="docutils literal notranslate"><span class="pre">preprocessing</span></code> is the mapping above and must match the artifact input.</p>
+<p><code class="docutils literal notranslate"><span class="pre">export_deployment(artifact,</span> <span class="pre">destination,</span> <span class="pre">*,</span> <span class="pre">head_weight,</span> <span class="pre">head_bias,</span> <span class="pre">labels,</span> <span class="pre">preprocessing,</span> <span class="pre">reduction=&quot;mean&quot;,</span> <span class="pre">time_bins=None,</span> <span class="pre">grid=None,</span> <span class="pre">temporal_weights=None)</span></code> writes a new application directory. <code class="docutils literal notranslate"><span class="pre">artifact</span></code> is an existing compatible <code class="docutils literal notranslate"><span class="pre">.spm</span></code> path and <code class="docutils literal notranslate"><span class="pre">destination</span></code> must not exist. Application export accepts v12 binary event packages with terminal spike records. <code class="docutils literal notranslate"><span class="pre">head_weight</span></code> is a finite numeric [classes,features] matrix, <code class="docutils literal notranslate"><span class="pre">head_bias</span></code> a finite [classes] vector, and <code class="docutils literal notranslate"><span class="pre">labels</span></code> a list or tuple of distinct nonempty strings, one per class. The head is stored as float64. <code class="docutils literal notranslate"><span class="pre">preprocessing</span></code> is the mapping above and must match the artifact input.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Reduction option</p></th>

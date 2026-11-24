@@ -394,10 +394,10 @@ one frame. Persist the returned JSON and the selected target with the run.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
 
-<span class="c1"># backbone and probe are the caller&#39;s model and representative BTCHW tensor.</span>
-<span class="n">bitstream</span> <span class="o">=</span> <span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span>
+<span class="c1"># backbone and probe are the caller's model and representative BTCHW tensor.</span>
+<span class="n">bitstream</span> <span class="o">=</span> <span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span>
 <span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">preflight</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="n">probe</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="n">bitstream</span><span class="p">)</span>
-<span class="n">Path</span><span class="p">(</span><span class="s2">&quot;preflight.json&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">Path</span><span class="p">(</span><span class="s2">"preflight.json"</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">spikepress.model_preflight.v1</span></code> gains an additive <code class="docutils literal notranslate"><span class="pre">hardware_budget</span></code> field.
@@ -459,7 +459,7 @@ existing compact target explicitly:</p>
 <span class="n">backbone</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">backbone</span><span class="p">)</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
 <span class="n">prepared</span><span class="p">,</span> <span class="n">preparation</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="n">probe</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="n">bitstream</span><span class="p">,</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">prepared</span><span class="p">,</span> <span class="n">probe</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="n">bitstream</span><span class="p">)</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="s2">&quot;backbone-compact.spm&quot;</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compiled</span><span class="p">,</span> <span class="s2">"backbone-compact.spm"</span><span class="p">)</span>
 <span class="n">package</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -484,7 +484,7 @@ optional CUDA <code class="docutils literal notranslate"><span class="pre">compi
 integer accumulation retains its canonical fallback; reset, decay, surrogate
 gradients and temporal state must keep their existing order.</p>
 <p>An opt-in optimization skips unused activity telemetry:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Only when this layer&#39;s activity metrics/regularizers/hooks are unused.</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Only when this layer's activity metrics/regularizers/hooks are unused.</span>
 <span class="n">event_layer</span><span class="o">.</span><span class="n">collect_activity</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
 </div>

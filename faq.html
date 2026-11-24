@@ -397,7 +397,7 @@ Matching weight shapes alone does not establish numerical equivalence.</p>
 <p>No. The selected image exposes a bounded event engine. Explicit C host islands
 and host classifiers form hybrid inference and have different costs. The
 compiler rejects an unsupported connection instead of changing its meaning.
-See <a class="reference internal" href="support.html#where-operations-run"><span class="std std-ref">the execution matrix</span></a>.</p>
+See <a class="reference internal" href="support.html#workflows"><span class="std std-ref">supported workflows</span></a>.</p>
 </section>
 <section id="can-the-compiler-make-any-oversized-network-fit">
 <h2>Can the compiler make any oversized network fit?<a class="headerlink" href="#can-the-compiler-make-any-oversized-network-fit" title="Link to this heading">#</a></h2>
@@ -451,9 +451,8 @@ and retain independent full-dataset accuracy and measurement evidence.</p>
 <h2>Why is energy unknown despite a successful inference?<a class="headerlink" href="#why-is-energy-unknown-despite-a-successful-inference" title="Link to this heading">#</a></h2>
 <p>Memory and traffic estimates are not electrical measurements. J/input and
 J/input-spike require compatible measured calibration with declared window,
-denominator and image/model identity. The included image’s observer remains
-<code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>; functional inference can still pass. Unknown energy
-is not zero. See <a class="reference internal" href="cost.html"><span class="std std-doc">cost estimation</span></a> and <a class="reference internal" href="results.html"><span class="std std-doc">measurement scope</span></a>.</p>
+denominator and image/model identity. PYNQ-Z2 functional inference reports
+<code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>. See <a class="reference internal" href="cost.html"><span class="std std-doc">cost estimation</span></a> and <a class="reference internal" href="results.html"><span class="std std-doc">measurement scope</span></a>.</p>
 </section>
 <section id="can-i-retry-after-a-timeout">
 <h2>Can I retry after a timeout?<a class="headerlink" href="#can-i-retry-after-a-timeout" title="Link to this heading">#</a></h2>

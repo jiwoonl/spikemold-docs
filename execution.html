@@ -449,10 +449,10 @@ python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--ou
     <span class="n">allow_host_ops</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">program</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>
-<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
-<span class="n">program</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="s2">"model.spm"</span><span class="p">)</span>
+<span class="n">program</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"model.spm"</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">program</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>  <span class="c1"># host-only plan</span>
-<span class="n">output</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span>  <span class="c1"># NumPy float32, or float64 for an f64 plan</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s2">"output"</span><span class="p">]</span>  <span class="c1"># NumPy float32, or float64 for an f64 plan</span>
 </pre></div>
 </div>
 <p>PyTorch handles authoring, capture and training. Deployment numerical kernels run in C; Python handles fixed graph scheduling, metadata and NumPy buffer passing. With <code class="docutils literal notranslate"><span class="pre">host_precision</span></code> omitted, float32/bool source selects f32 and float64 selects f64. Automatic mode rejects mixed float32/float64 graphs. Explicit <code class="docutils literal notranslate"><span class="pre">host_precision=&quot;float32&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;float64&quot;</span></code> converts to that precision; validate task accuracy against the original after conversion. float16/bfloat16 and integer model capture are rejected; binary bool input and safe binary counts are supported.</p>
@@ -476,7 +476,7 @@ python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--ou
 <td><p>reshape/view/flatten, permute/transpose, fixed slice, concat, broadcast ADD/multiply, binary OR/AND</p></td>
 </tr>
 <tr class="row-even"><td><p>C neuron</p></td>
-<td><p>BCHW T1 EventIF threshold, DirectCurrentIF/LIF quantize/shift/hard-zero reset</p></td>
+<td><p>Single-step <code class="docutils literal notranslate"><span class="pre">Threshold</span></code> over BC or BCHW</p></td>
 </tr>
 <tr class="row-odd"><td><p>Auxiliary activation</p></td>
 <td><p>ReLU, sigmoid, tanh; arbitrary functional capture is rejected with the specific unsupported node</p></td>
@@ -492,7 +492,7 @@ python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--ou
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># program is a float32 hybrid plan.</span>
 <span class="n">compact</span> <span class="o">=</span> <span class="n">program</span><span class="o">.</span><span class="n">quantize_dynamic</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">compact</span><span class="o">.</span><span class="n">report</span><span class="p">())</span>
-<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="s2">&quot;model-int8.spm&quot;</span><span class="p">)</span>
+<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">compact</span><span class="p">,</span> <span class="s2">"model-int8.spm"</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">compact</span><span class="p">(</span><span class="n">example</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -541,20 +541,18 @@ python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--ou
 </section>
 <section id="installation-and-example">
 <h2>Installation and example<a class="headerlink" href="#installation-and-example" title="Link to this heading">#</a></h2>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">&#39;.[compiler]&#39;</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s1">'.[compiler]'</span>
 python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--output<span class="w"> </span>build/snn-hybrid-demo
 </pre></div>
 </div>
-<p>The example compares Torch DirectCurrentLIF and host-head output against C execution, save and reload. An installation without the C extension reports the required installation condition when native execution is requested. Use <code class="docutils literal notranslate"><span class="pre">examples/</span></code> from a checkout or source distribution.</p>
+<p>The example compares a PyTorch threshold and classifier with C execution before and after saving the package. An installation without the C extension reports the required installation condition when native execution is requested. Use <code class="docutils literal notranslate"><span class="pre">examples/</span></code> from a checkout or source distribution.</p>
 <p>New f32/INT8 hybrid plans use the <code class="docutils literal notranslate"><span class="pre">.spm.hybrid.v2</span></code> envelope. Existing f64 plans remain <code class="docutils literal notranslate"><span class="pre">.spm.hybrid.v1</span></code>. Existing resident/virtual artifact loaders remain in use. Upgrade installations that do not support the new schema before reloading. To replace an artifact, export to a separate path and preserve the original.</p>
 </section>
 <section id="hardware-verification-scope">
 <h2>Hardware verification scope<a class="headerlink" href="#hardware-verification-scope" title="Link to this heading">#</a></h2>
 <p>The INT16 state kernel has scalar and ARM NEON dispatch. It preserves time/event order and vectorizes independent state lanes. Current verification covers host scalar, C sanitizer and ARM cross-assembly. ARM execution and board latency remain unverified. Native DMA wait uses a C monotonic loop, with a Python callback for PYNQ status observation and the existing driver for final handling.</p>
-<p>The included deployment image has its own capability and register contract.
-Image verification and load-time admission remain authoritative. Binary output
-from a C host neuron does not enable direct-current FPGA ingress. Model/input
-qualification applies to its recorded bytes; see <a class="reference internal" href="results.html"><span class="std std-doc">measured performance</span></a>.
+<p>The runtime verifies the image and package at load time. Use binary event
+windows for FPGA segments. Model and input qualification applies to recorded bytes; see <a class="reference internal" href="results.html"><span class="std std-doc">measured performance</span></a>.
 J/input, J/spike and total latency require compatible measured calibration.</p>
 </section>
 <section id="compact-1d-export-and-spatial-capacity">
@@ -565,7 +563,7 @@ a height-one 2D representation and preserves its kernel, stride, padding,
 neurons and flatten order. Existing operator restrictions still apply.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
     <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example_input</span><span class="p">,</span>
-    <span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;spikemold.bit&quot;</span><span class="p">,</span>
+    <span class="n">bitstream</span><span class="o">=</span><span class="s2">"spikemold.bit"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>

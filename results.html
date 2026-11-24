@@ -388,49 +388,38 @@
 ARM host + FPGA API path, including the selected native C classifier. They
 are not FPGA-only kernel benchmarks or measurements on arbitrary new inputs.
 Model, input, checkpoint and protocol hashes are retained in the
-<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/288b94fef008ad5d92acbbb4e8054c7794a8c106/benchmarks/results.json">machine-readable results</a>.</p>
+<a class="reference download internal" download="" href="_downloads/90bcd17624db474c1e005e9bd111b25c/results.json"><span class="xref download myst">machine-readable results</span></a>.</p>
 <section id="measurement-conditions">
 <h2>Measurement conditions<a class="headerlink" href="#measurement-conditions" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Setting</p></th>
-<th class="head"><p>15-model campaign</p></th>
+<th class="head"><p>Value</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Board / accelerator clock</p></td>
-<td><p>PYNQ-Z2 / 100 MHz</p></td>
+<tr class="row-even"><td><p>Target</p></td>
+<td><p>PYNQ-Z2 · 100 MHz · Batch 1</p></td>
 </tr>
-<tr class="row-odd"><td><p>Batch</p></td>
-<td><p>One input window per call</p></td>
+<tr class="row-odd"><td><p>Input</p></td>
+<td><p>One stored window per model</p></td>
 </tr>
-<tr class="row-even"><td><p>Input</p></td>
-<td><p>One stored input per model, repeated for timing</p></td>
+<tr class="row-even"><td><p>Timing</p></td>
+<td><p>2 warmups · 10 serial calls per path</p></td>
 </tr>
-<tr class="row-odd"><td><p>Warmup / samples</p></td>
-<td><p>Two warmups, ten serial timed calls per path</p></td>
-</tr>
-<tr class="row-even"><td><p>Wait policy</p></td>
-<td><p>Latency-oriented polling</p></td>
-</tr>
-<tr class="row-odd"><td><p>Ordinary call</p></td>
-<td><p>Input packing, transfer, FPGA execution, completion and host head</p></td>
-</tr>
-<tr class="row-even"><td><p>Prepared call</p></td>
-<td><p>Same fresh transfer/execution/head; first packing/seal is outside the timed call</p></td>
-</tr>
-<tr class="row-odd"><td><p>Excluded setup</p></td>
-<td><p>Model loading, first preparation, file capture and golden comparison</p></td>
-</tr>
-<tr class="row-even"><td><p>Accuracy column</p></td>
-<td><p>Software validation of the selected checkpoint; not full-dataset FPGA accuracy</p></td>
+<tr class="row-odd"><td><p>Wait</p></td>
+<td><p>Latency polling</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The source snapshot for this campaign is <code class="docutils literal notranslate"><span class="pre">739e1eca</span></code>. Later packaging and
-documentation changes do not create new physical measurements. The included
-image retains the same verified image bytes.</p>
+<ul class="simple">
+<li><p><strong>Ordinary</strong> · Input packing → FPGA transfer and execution → C readout</p></li>
+<li><p><strong>Prepared</strong> · FPGA transfer and execution → C readout</p></li>
+</ul>
+<p>Model loading, initial preparation and golden comparison are outside the
+timer. The validation column reports software accuracy. Source snapshot
+<code class="docutils literal notranslate"><span class="pre">739e1eca</span></code>.</p>
 </section>
 <section id="model-results">
 <h2>Model results<a class="headerlink" href="#model-results" title="Link to this heading">#</a></h2>
@@ -541,14 +530,7 @@ checkpoint variants, not matched reproductions of published architectures.</p>
 <td class="text-right"><p>26.78</p></td>
 <td class="text-right"><p>37.27</p></td>
 </tr>
-<tr class="row-odd"><td><p>DVS SCNN legacy 10epoch</p></td>
-<td class="text-right"><p>16</p></td>
-<td class="text-right"><p>22.22%</p></td>
-<td class="text-right"><p>102.41</p></td>
-<td class="text-right"><p>29.86</p></td>
-<td class="text-right"><p>33.43</p></td>
-</tr>
-<tr class="row-even"><td><p>Speech CNN legacy subset</p></td>
+<tr class="row-odd"><td><p>Speech CNN legacy subset</p></td>
 <td class="text-right"><p>16</p></td>
 <td class="text-right"><p>12.40%</p></td>
 <td class="text-right"><p>15.93</p></td>
@@ -558,11 +540,11 @@ checkpoint variants, not matched reproductions of published architectures.</p>
 </tbody>
 </table>
 </div>
-<p>Software accuracy comes from the selected checkpoint validation set or the stored exploratory run specified in <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/288b94fef008ad5d92acbbb4e8054c7794a8c106/benchmarks/results.json">the result data</a>. Gesture uses 216 validation samples and CIFAR uses 5,000. The legacy MobileNet, DVS SCNN and Speech CNN are ten-epoch exploratory checkpoints; their numbers describe those checkpoints. Full-dataset FPGA accuracy remains unmeasured.</p>
+<p>Software accuracy comes from the selected checkpoint validation set or the stored exploratory run specified in <a class="reference download internal" download="" href="_downloads/90bcd17624db474c1e005e9bd111b25c/results.json"><span class="xref download myst">the result data</span></a>. Gesture uses 216 validation samples and CIFAR uses 5,000. The legacy MobileNet and Speech CNN are ten-epoch exploratory checkpoints; their numbers describe those checkpoints. Full-dataset FPGA accuracy remains unmeasured.</p>
 </section>
 <section id="same-model-comparison">
 <h2>Same-model comparison<a class="headerlink" href="#same-model-comparison" title="Link to this heading">#</a></h2>
-<p>A separate historical DVS checkpoint was measured with its previous implementation and the included deployment image. Both used the same checkpoint, float32 input, head, batch 1, T16, 100 MHz PL, 650 MHz ARM and auto wait policy. Latency uses 12 calls; throughput uses a separate continuous 20 calls. Current ordinary inference was repeated after restoring the included image.</p>
+<p>A separate historical DVS checkpoint was measured with its previous implementation and the 100 MHz PYNQ-Z2 configuration. Both used the same checkpoint, float32 input, head, batch 1, T16, 100 MHz PL, 650 MHz ARM and auto wait policy. Latency uses 12 calls; throughput uses a separate continuous 20 calls. Current ordinary inference was repeated after restoring that overlay.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Same DVS checkpoint</p></th>
@@ -577,12 +559,12 @@ checkpoint variants, not matched reproductions of published architectures.</p>
 <td class="text-right"><p>3.857 windows/s</p></td>
 <td class="text-right"><p>64.158 ms</p></td>
 </tr>
-<tr class="row-odd"><td><p>Included image: ordinary</p></td>
+<tr class="row-odd"><td><p>PYNQ-Z2 ordinary</p></td>
 <td class="text-right"><p>136.336–136.381 ms</p></td>
 <td class="text-right"><p>7.251–7.344 windows/s</p></td>
 <td class="text-right"><p>111.144–113.143 ms</p></td>
 </tr>
-<tr class="row-even"><td><p>Included image: prepared</p></td>
+<tr class="row-even"><td><p>PYNQ-Z2 prepared</p></td>
 <td class="text-right"><p>64.784 ms</p></td>
 <td class="text-right"><p>15.535 windows/s</p></td>
 <td class="text-right"><p>39.671 ms</p></td>
@@ -594,15 +576,15 @@ checkpoint variants, not matched reproductions of published architectures.</p>
 </section>
 <section id="verification-and-limitations">
 <h2>Verification and limitations<a class="headerlink" href="#verification-and-limitations" title="Link to this heading">#</a></h2>
-<p>All 30 original model/path runs passed. Independent replay checked 350 captured frames and 300 timed outputs. The matched comparison passed 12 full output tensors and 128 timed feature/logit outputs. The included image was restored to 100 MHz and idle. Its observer remains <code class="docutils literal notranslate"><span class="pre">inference_only</span></code> with <code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>. Gesture LIF32 exceeds the qualified four-tile bound; other unsupported/unexported models retain their compiler and provenance blockers.</p>
+<p>The 28 reported model/path runs passed. Independent replay checked 343 captured frames and 280 timed outputs for these runs. The matched comparison passed 12 full output tensors and 128 timed feature/logit outputs. The PYNQ-Z2 overlay was restored to 100 MHz and idle. Its observer remains <code class="docutils literal notranslate"><span class="pre">inference_only</span></code> with <code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>. Gesture LIF32 exceeds the qualified four-tile bound; other unsupported/unexported models retain their compiler and provenance blockers.</p>
 </section>
 <section id="evidence-and-reproduction">
 <h2>Evidence and reproduction<a class="headerlink" href="#evidence-and-reproduction" title="Link to this heading">#</a></h2>
-<p>Raw inputs, outputs, scripts and source manifests are retained in the 24,492,092-byte review archive, SHA-256 <code class="docutils literal notranslate"><span class="pre">68672474d15bbfe46613cbc183347081fd915c7de210639e46b849d61cdb5eda</span></code>. The archive includes 1,385 payloads and passed fresh-extraction checks. The legacy runtime capture contains the executable-code/native subset and its original full-kit manifest. Full training data, large checkpoints and the complete historical kit are external. <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/issues/16">Evidence and retrieval</a></p>
+<p>The retained model identities and measurements are recorded in the machine-readable results. Raw inputs and outputs require separately retained external assets.</p>
 <p>The full trained checkpoints, datasets and historical runtime kit are not the
 small examples shipped with this SDK. Use the <a class="reference internal" href="tutorials.html"><span class="std std-doc">runnable example catalog</span></a>
 for a self-contained CPU workflow and the <a class="reference internal" href="board.html"><span class="std std-doc">board walkthrough</span></a> for
-first execution with the included image. Replicating a performance row requires
+a first board run. Replicating a performance row requires
 its exact external model/input/head/protocol assets. CPU recurrence and host
 INT8 microbenchmarks have their own conditions in <a class="reference internal" href="execution.html"><span class="std std-doc">execution</span></a>;
 they do not establish full-model or FPGA speedup.</p>

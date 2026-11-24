@@ -485,7 +485,7 @@ fault can leave DMA ownership uncertain. Follow <a class="reference internal" hr
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Evidence</p></th>
-<th class="head"><p>Result for the included image</p></th>
+<th class="head"><p>PYNQ-Z2</p></th>
 </tr>
 </thead>
 <tbody>
@@ -499,15 +499,13 @@ fault can leave DMA ownership uncertain. Follow <a class="reference internal" hr
 <td><p>Selected CIFAR and DVS fixtures each matched 32,768 golden output words.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Board functional inference</p></td>
-<td><p>The saved-input campaign covered 15 models. Its reported latency includes ARM and PL execution. See <a class="reference internal" href="results.html"><span class="std std-doc">measured results</span></a>.</p></td>
+<td><p>The saved-input campaign reports 14 models. Its reported latency includes ARM and PL execution. See <a class="reference internal" href="results.html"><span class="std std-doc">measured results</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The included image uses <code class="docutils literal notranslate"><span class="pre">unmeasured_inference=True</span></code> because its hardware
-measurement observer does not provide valid sessions. PL-only latency,
-electrical energy and full-dataset FPGA accuracy remain unmeasured for this
-image. See <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/r114.md">deployment qualification</a>.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">unmeasured_inference=True</span></code> for this PYNQ-Z2 profile.
+<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/r114.md">Deployment qualification</a> describes the measurement scope.</p>
 <p>For the exact selected RTL, generics and read order, use the image’s
 <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/68a9b0d24eb51d3425a0f889a975332d02380288/bitstreams/pynq-z2/provenance/SOURCES.json">source inventory</a>.
 Start with <code class="docutils literal notranslate"><span class="pre">sparse_board_top</span></code> for the AXI and result interfaces,

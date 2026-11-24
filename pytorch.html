@@ -387,38 +387,32 @@ automatically equivalent to these layers.</p>
 <h2>Moving from SpikingJelly or snnTorch<a class="headerlink" href="#moving-from-spikingjelly-or-snntorch" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Familiar workflow</p></th>
-<th class="head"><p>SpikePress behavior</p></th>
+<tr class="row-odd"><th class="head"><p>Task</p></th>
+<th class="head"><p>API or layout</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Construct a <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code></p></td>
-<td><p>Compose native layers from <code class="docutils literal notranslate"><span class="pre">spikepress.nn</span></code>; ordinary <code class="docutils literal notranslate"><span class="pre">torch.nn</span></code> host operators require explicit supported hybrid compilation.</p></td>
+<tr class="row-even"><td><p>Define a model</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code> + <code class="docutils literal notranslate"><span class="pre">spikepress.nn</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Select single-step or multi-step mode</p></td>
-<td><p>Pass the full <code class="docutils literal notranslate"><span class="pre">B,T,C,H,W</span></code> or <code class="docutils literal notranslate"><span class="pre">B,T,C,L</span></code> tensor to native event layers and set <code class="docutils literal notranslate"><span class="pre">SparseEventTrainingPreset(timesteps=T)</span></code>. T is 1–64.</p></td>
+<tr class="row-odd"><td><p>Multi-step input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">B,T,C,H,W</span></code> or <code class="docutils literal notranslate"><span class="pre">B,T,C,L</span></code> · <code class="docutils literal notranslate"><span class="pre">timesteps=T</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Carry membrane state across calls</p></td>
-<td><p>Native event state resets between forward calls and carries only within T. Do not assume a library’s persistent-state behavior.</p></td>
+<tr class="row-even"><td><p>Membrane state</p></td>
+<td><p>One forward call · Zero at entry</p></td>
 </tr>
-<tr class="row-odd"><td><p>Reset neuron state at a sequence boundary</p></td>
-<td><p>Each native forward call is already a new sequence. There is no general external-library reset adapter.</p></td>
+<tr class="row-odd"><td><p>Train</p></td>
+<td><p>PyTorch optimizer · Surrogate gradients</p></td>
 </tr>
-<tr class="row-even"><td><p>Use an optimizer and surrogate gradients</p></td>
-<td><p>Native layers expose trainable parameters and their documented QAT/surrogate semantics. Training dtype does not imply floating-point PL execution.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Load a pretrained <code class="docutils literal notranslate"><span class="pre">state_dict</span></code></p></td>
-<td><p>Reconstruct the matching architecture, configuration and numeric meaning first. Matching tensor shapes alone do not prove equivalence.</p></td>
-</tr>
-<tr class="row-even"><td><p>Export after <code class="docutils literal notranslate"><span class="pre">model.eval()</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">prepare</span></code> creates a deployment copy; <code class="docutils literal notranslate"><span class="pre">compile</span></code> decides exact acceptance. It does not silently replace unsupported operators.</p></td>
+<tr class="row-even"><td><p>Export</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">model.eval()</span></code> → <code class="docutils literal notranslate"><span class="pre">prepare</span></code> → <code class="docutils literal notranslate"><span class="pre">compile</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p>See <a class="reference internal" href="training.html"><span class="std std-doc">training</span></a> for a complete optimizer loop and <a class="reference internal" href="api/nn.html"><span class="std std-doc">layer reference</span></a>
-for constructor signatures. Binary event tensors represent spikes, not arbitrary
-analog features. Explicit direct-current and hybrid paths have separate contracts.</p>
+for constructor signatures. Feed binary spikes to native event layers. Use
+<a class="reference internal" href="execution.html"><span class="std std-doc">C host operations</span></a> for supported real-valued graph regions.</p>
 </section>
 <section id="a-complete-classifier-optimizer-loop">
 <h2>A complete classifier optimizer loop<a class="headerlink" href="#a-complete-classifier-optimizer-loop" title="Link to this heading">#</a></h2>
@@ -450,8 +444,8 @@ API integration, not learned dataset accuracy.</p>
 <span class="c1"># Export only the supported backbone; the biased head is a host component.</span>
 <span class="n">prepared</span><span class="p">,</span> <span class="n">details</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">backbone</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">inputs</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">validate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">prepared</span><span class="p">,</span> <span class="n">inputs</span><span class="p">[:</span><span class="mi">1</span><span class="p">])</span>
-<span class="k">assert</span> <span class="n">compiled</span><span class="o">.</span><span class="n">rejection_report</span><span class="p">[</span><span class="s2">&quot;accepted&quot;</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PyTorch classifier update and backbone export: PASS&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">compiled</span><span class="o">.</span><span class="n">rejection_report</span><span class="p">[</span><span class="s2">"accepted"</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"PyTorch classifier update and backbone export: PASS"</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PyTorch classifier update and backbone export: PASS
@@ -472,26 +466,18 @@ that its graph can be compiled.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>API</p></th>
-<th class="head"><p>Weights</p></th>
-<th class="head"><p>Temporal state</p></th>
-<th class="head"><p>Training behavior</p></th>
+<th class="head"><p>Role</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IFLinear</span></code> / <code class="docutils literal notranslate"><span class="pre">LIFLinear</span></code></p></td>
-<td><p>Trainable INT4 shadows</p></td>
-<td><p>Yes, within T</p></td>
-<td><p>Native surrogate-gradient training.</p></td>
+<td><p>Trainable temporal spiking layers</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Threshold</span></code> (older name <code class="docutils literal notranslate"><span class="pre">EventIF</span></code>)</p></td>
-<td><p>None</p></td>
-<td><p>None</p></td>
-<td><p>Hard single-step binary comparison; no surrogate gradient.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Threshold</span></code></p></td>
+<td><p>Single-step binary comparison</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">torch.nn.Linear</span></code></p></td>
-<td><p>Trainable floats</p></td>
-<td><p>None</p></td>
-<td><p>Ordinary PyTorch training; supported deployment needs the explicit host path.</p></td>
+<td><p>Trainable linear layer · C host deployment</p></td>
 </tr>
 </tbody>
 </table>
@@ -504,8 +490,9 @@ meanings and conflicts are in the <a class="reference internal" href="api/parame
 <h2>Precision, performance and checkpoints<a class="headerlink" href="#precision-performance-and-checkpoints" title="Link to this heading">#</a></h2>
 <p>Native deployment uses signed INT4 weights and INT16 state with defined
 accumulation, saturation, reset and decay. Floating-point shadows enable
-training; <code class="docutils literal notranslate"><span class="pre">prepare</span></code> is not a general post-training converter. The supported
-retention codebook is 1, 1/2, 1/4, 1/8 and 1/16 where admitted. Continuous
+training. Standard PYNQ-Z2 retention values are 1, 1/2, 1/4, 1/8 and 1/16.
+See <a class="reference internal" href="compatibility.html#retention-profiles"><span class="std std-ref">retention profiles</span></a> for the fractional
+candidate. Continuous
 PLIF or subtractive reset can have different semantics; explicit approximation
 needs error bounds and task-accuracy validation. Hybrid C paths follow source
 float32/float64 by default; dynamic INT8 is explicit and requires validation.

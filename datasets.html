@@ -389,7 +389,7 @@ if you do not have prepared data. Use a source checkout with the compiler extra;
 these scripts are not bundled as a wheel workspace.</p>
 <section id="cifar-and-dvs-split-files">
 <h2>CIFAR and DVS split files<a class="headerlink" href="#cifar-and-dvs-split-files" title="Link to this heading">#</a></h2>
-<p>For <code class="docutils literal notranslate"><span class="pre">--recipe</span> <span class="pre">mobilenet</span></code> and <code class="docutils literal notranslate"><span class="pre">--recipe</span> <span class="pre">dvs_scnn</span></code>, place <code class="docutils literal notranslate"><span class="pre">train.npz</span></code> and
+<p>For <code class="docutils literal notranslate"><span class="pre">--recipe</span> <span class="pre">mobilenet</span></code>, <code class="docutils literal notranslate"><span class="pre">--recipe</span> <span class="pre">scnn7_dvs</span></code> and <code class="docutils literal notranslate"><span class="pre">--recipe</span> <span class="pre">lif_dvs</span></code>, place <code class="docutils literal notranslate"><span class="pre">train.npz</span></code> and
 <code class="docutils literal notranslate"><span class="pre">validation.npz</span></code> in the directory passed to <code class="docutils literal notranslate"><span class="pre">--data</span></code>. Each archive must contain
 <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, and <code class="docutils literal notranslate"><span class="pre">ids</span></code>, with equal nonzero first dimension N; <code class="docutils literal notranslate"><span class="pre">y</span></code> and <code class="docutils literal notranslate"><span class="pre">ids</span></code> are
 one-dimensional. <code class="docutils literal notranslate"><span class="pre">x</span></code> is uint8 or bool, <code class="docutils literal notranslate"><span class="pre">y</span></code> is integer, and IDs must be unique
@@ -410,7 +410,7 @@ suitable for this workflow.</p>
 <td><p>Raw uint8 pixels for the first form; binary for temporal frames</p></td>
 <td><p>0–9</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dvs_scnn</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">scnn7_dvs</span></code>, <code class="docutils literal notranslate"><span class="pre">lif_dvs</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">[N,16,2,128,128]</span></code></p></td>
 <td><p>Binary temporal frames</p></td>
 <td><p>0–10</p></td>

@@ -382,7 +382,7 @@
                   
   <section id="model-recipes">
 <h1>Model recipes<a class="headerlink" href="#model-recipes" title="Link to this heading">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">examples/model_recipes.py</span></code> provides bias-free DVS SCNN, depthwise MobileNet,
+<p><code class="docutils literal notranslate"><span class="pre">examples/model_recipes.py</span></code> provides bias-free depthwise MobileNet,
 feedforward speech CNN, and OR residual training examples. They are small native
 SpikePress designs, not reproductions of published architectures or accuracy.
 Use <code class="docutils literal notranslate"><span class="pre">HybridClassifier</span></code> for a host Linear head: its input is the mean spike rate
@@ -434,9 +434,9 @@ explicitly host-only, not a biased neural layer in the FPGA graph.</p>
 <span class="w">  </span>--data<span class="w"> </span>/path/to/prepared/cifar<span class="w"> </span>--output<span class="w"> </span>/path/to/new/run<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--widths<span class="w"> </span><span class="m">16</span>,32,64,128<span class="w"> </span>--timesteps<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--fp32-epochs<span class="w"> </span><span class="m">60</span><span class="w"> </span>--qat-epochs<span class="w"> </span><span class="m">20</span><span class="w"> </span>--min-epochs<span class="w"> </span><span class="m">10</span><span class="w"> </span>--patience<span class="w"> </span><span class="m">8</span>
-<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/train_recipes.py<span class="w"> </span>--recipe<span class="w"> </span>dvs_scnn<span class="w"> </span><span class="se">\</span>
+<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/train_recipes.py<span class="w"> </span>--recipe<span class="w"> </span>scnn7_dvs<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--data<span class="w"> </span>/path/to/prepared/dvs<span class="w"> </span>--output<span class="w"> </span>/path/to/new/run<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--widths<span class="w"> </span><span class="m">16</span>,32,64<span class="w"> </span>--stem-stride<span class="w"> </span><span class="m">1</span><span class="w"> </span>--timesteps<span class="w"> </span><span class="m">16</span>
+<span class="w">  </span>--stem-stride<span class="w"> </span><span class="m">1</span><span class="w"> </span>--timesteps<span class="w"> </span><span class="m">16</span>
 <span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/train_recipes.py<span class="w"> </span>--recipe<span class="w"> </span>speech_cnn<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--data<span class="w"> </span>/path/to/prepared/shd<span class="w"> </span>--output<span class="w"> </span>/path/to/new/run<span class="w"> </span>--timesteps<span class="w"> </span><span class="m">64</span>
 </pre></div>
@@ -499,7 +499,7 @@ one-time terminal QAT workflow.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>python<span class="w"> </span>examples/sweep_recipes.py<span class="w"> </span>--output<span class="w"> </span>new-capacity-report.json
 </pre></div>
 </div>
-<p>This checks widths, T and DVS stem stride. Rejected candidates retain their
+<p>This checks widths and T for MobileNet and speech CNN. Rejected candidates retain their
 compiler reason; no synthetic accuracy, cycles or energy are added to the
 report. Runtime capacity checks still apply after training changes sparsity.</p>
 <p>Verify a saved two-stage export offline, then manually qualify the same bound

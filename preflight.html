@@ -401,7 +401,7 @@ it does not program a board.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">runpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
 
-<span class="n">model</span><span class="p">,</span> <span class="n">example</span> <span class="o">=</span> <span class="n">runpy</span><span class="o">.</span><span class="n">run_path</span><span class="p">(</span><span class="s2">&quot;examples/compile_model.py&quot;</span><span class="p">)[</span><span class="s2">&quot;make_model&quot;</span><span class="p">]()</span>
+<span class="n">model</span><span class="p">,</span> <span class="n">example</span> <span class="o">=</span> <span class="n">runpy</span><span class="o">.</span><span class="n">run_path</span><span class="p">(</span><span class="s2">"examples/compile_model.py"</span><span class="p">)[</span><span class="s2">"make_model"</span><span class="p">]()</span>
 <span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">preflight</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">example</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">spikepress</span><span class="o">.</span><span class="n">format_preflight</span><span class="p">(</span><span class="n">report</span><span class="p">))</span>
 </pre></div>

@@ -385,30 +385,24 @@ workflow demonstrations, not trained-model accuracy benchmarks.</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Example</p></th>
-<th class="head"><p>Device / extra requirement</p></th>
-<th class="head"><p>What success means</p></th>
+<th class="head"><p>Requirement</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Compile, save and compare golden</p></td>
-<td><p>CPU + PyTorch</p></td>
-<td><p>Exact nonzero PyTorch/integer agreement for one input.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#compile-a-nonzero-snn">Compile and compare golden</a></p></td>
+<td><p>CPU · PyTorch</p></td>
 </tr>
-<tr class="row-odd"><td><p>Train and resume</p></td>
-<td><p>CPU + PyTorch</p></td>
-<td><p>Optimizer updates, reports, checkpoint continuation and export.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#train-inspect-and-resume">Train and resume</a></p></td>
+<td><p>CPU · PyTorch</p></td>
 </tr>
-<tr class="row-even"><td><p>Raw events, head and labels</p></td>
-<td><p>CPU + native C extension</p></td>
-<td><p>Explicit encoding and application export; board not checked.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bind-raw-events-a-head-and-labels">Encode raw events</a></p></td>
+<td><p>CPU · C extension</p></td>
 </tr>
-<tr class="row-odd"><td><p>C hybrid and optional INT8</p></td>
-<td><p>CPU + native C extension</p></td>
-<td><p>Host C output compared to PyTorch; task accuracy not established.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#use-c-host-operators">C host and INT8</a></p></td>
+<td><p>CPU · C extension</p></td>
 </tr>
-<tr class="row-even"><td><p>Saved-input board execution</p></td>
-<td><p>Compatible PYNQ-Z2 board + native SDK + included image bundle</p></td>
-<td><p>Actual execution; optional full golden comparison on the admitted resident v12 path.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#run-a-saved-input-on-a-board">Run a saved input</a></p></td>
+<td><p>PYNQ-Z2 · Native SDK</p></td>
 </tr>
 </tbody>
 </table>
@@ -424,7 +418,7 @@ python<span class="w"> </span>-m<span class="w"> </span>json.tool<span class="w"
 <code class="docutils literal notranslate"><span class="pre">nonzero_output_spikes</span></code> is 1, input shape is <code class="docutils literal notranslate"><span class="pre">[1,2,8,8]</span></code>, and golden shape is
 <code class="docutils literal notranslate"><span class="pre">[2,1,4,8]</span></code>. The output contains a <code class="docutils literal notranslate"><span class="pre">.spm</span></code>, input/golden <code class="docutils literal notranslate"><span class="pre">.npy</span></code> files and the
 static/preparation/compiler reports. See the <a class="reference internal" href="quickstart.html"><span class="std std-doc">step-by-step explanation</span></a>.</p>
-<p>For the included deployment image, add
+<p>To export for PYNQ-Z2, add
 <code class="docutils literal notranslate"><span class="pre">--bitstream</span> <span class="pre">bitstreams/pynq-z2/spikemold.bit</span></code>. Its matching <code class="docutils literal notranslate"><span class="pre">.hwh</span></code> and
 <code class="docutils literal notranslate"><span class="pre">.profile.json</span></code> are already tracked beside it. This verifies/selects
 metadata on the workstation without accessing hardware. The default no-flag CPU exercise uses the existing software compact contract.</p>
@@ -443,37 +437,9 @@ python<span class="w"> </span>-m<span class="w"> </span>json.tool<span class="w"
 <code class="docutils literal notranslate"><span class="pre">completed_steps:</span> <span class="pre">6</span></code>. Both exports compare against their own integer golden.
 Reports include only measured/caller-supplied values. This synthetic objective
 matches a fixed activity target, not dataset classification accuracy.</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>File</p></th>
-<th class="head"><p>Purpose</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">training.jsonl</span></code></p></td>
-<td><p>Emitted metrics, phases and hardware diagnostics.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resume.pt</span></code></p></td>
-<td><p>This example’s model/optimizer/input/step/CPU-RNG continuation.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state_dict.pt</span></code>, <code class="docutils literal notranslate"><span class="pre">model_config.json</span></code></p></td>
-<td><p>Weights and architecture/execution settings.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">model.spm</span></code></p></td>
-<td><p>Deployment artifact, separate from the training checkpoint.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">events.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">golden.npy</span></code></p></td>
-<td><p>Input B,T,C,H,W (<code class="docutils literal notranslate"><span class="pre">1,4,8,1,1</span></code>); golden T,H,W,C (<code class="docutils literal notranslate"><span class="pre">4,1,1,8</span></code>).</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">preparation.json</span></code>, <code class="docutils literal notranslate"><span class="pre">compiler_report.json</span></code></p></td>
-<td><p>Preparation and exact export acceptance.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execution_report.json</span></code>, <code class="docutils literal notranslate"><span class="pre">validation.json</span></code></p></td>
-<td><p>Observed recurrence path and CPU export proof.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<p><strong>Outputs</strong> · <code class="docutils literal notranslate"><span class="pre">training.jsonl</span></code> metrics · <code class="docutils literal notranslate"><span class="pre">resume.pt</span></code> checkpoint · <code class="docutils literal notranslate"><span class="pre">state_dict.pt</span></code>
+and <code class="docutils literal notranslate"><span class="pre">model_config.json</span></code> model · <code class="docutils literal notranslate"><span class="pre">model.spm</span></code> deployment · <code class="docutils literal notranslate"><span class="pre">events.npy</span></code> input ·
+<code class="docutils literal notranslate"><span class="pre">golden.npy</span></code> reference · JSON preparation, compilation and validation reports</p>
 <p>Append <code class="docutils literal notranslate"><span class="pre">--bitstream</span> <span class="pre">bitstreams/pynq-z2/spikemold.bit</span></code> to select the export profile.
 <code class="docutils literal notranslate"><span class="pre">model_config.json</span></code> records <code class="docutils literal notranslate"><span class="pre">export_target</span></code> separately from its legacy/default
 training <code class="docutils literal notranslate"><span class="pre">target</span></code>; <code class="docutils literal notranslate"><span class="pre">export_bitstream</span></code> records the supplied filename. Reuse the
@@ -507,8 +473,7 @@ python<span class="w"> </span>examples/snn_hybrid.py<span class="w"> </span>--ou
 Expected fields include <code class="docutils literal notranslate"><span class="pre">torch_match:</span> <span class="pre">true</span></code>, <code class="docutils literal notranslate"><span class="pre">execution:</span> <span class="pre">cpu_native_host</span></code> and
 <code class="docutils literal notranslate"><span class="pre">hardware:</span> <span class="pre">NOT_CHECKED</span></code>. The ordinary path has <code class="docutils literal notranslate"><span class="pre">precision:</span> <span class="pre">float32</span></code>; INT8 is
 explicit and retains float32 output. Its small numerical tolerance check is
-not validation of classification accuracy after quantization. These commands
-run a host-only plan; they do not execute direct-current input on the included image.</p>
+not validation of classification accuracy after quantization. Both commands run on the CPU.</p>
 <p>See <a class="reference internal" href="execution.html"><span class="std std-doc">C and PL execution</span></a> for supported operators and limits.</p>
 </section>
 <section id="mix-pytorch-functions-and-export-residual-add">
@@ -526,8 +491,7 @@ what is supported and which graph representation to use.</p>
 <section id="run-a-saved-input-on-a-board">
 <h2>Run a saved input on a board<a class="headerlink" href="#run-a-saved-input-on-a-board" title="Link to this heading">#</a></h2>
 <p>Follow <a class="reference internal" href="board.html"><span class="std std-doc">the board walkthrough</span></a>, which lists the compatible board/SDK prerequisites, file transfer, first full-output comparison and
-prepared input. The <code class="docutils literal notranslate"><span class="pre">run_board.py</span></code> helper is intended for the included image; its <code class="docutils literal notranslate"><span class="pre">--golden</span></code> option
-requires the bounded resident v12 C dense-output path. Ordinary <code class="docutils literal notranslate"><span class="pre">Board.run</span></code>
+prepared input. The <code class="docutils literal notranslate"><span class="pre">--golden</span></code> option of <code class="docutils literal notranslate"><span class="pre">run_board.py</span></code> requires resident v12 dense output. Ordinary <code class="docutils literal notranslate"><span class="pre">Board.run</span></code>
 also supports other admitted program types as described in the runtime API.</p>
 <p>The CI tutorial smoke command is:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>tools/check_user_examples.py

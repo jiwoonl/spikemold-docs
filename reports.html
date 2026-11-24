@@ -383,8 +383,8 @@ read-only summary is available without loading a checkpoint or importing
 PyTorch:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.monitor</span><span class="w"> </span><span class="kn">import</span> <span class="n">summarize_training_log</span>
 
-<span class="n">report</span> <span class="o">=</span> <span class="n">summarize_training_log</span><span class="p">(</span><span class="s2">&quot;run/training.jsonl&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">&quot;last_training&quot;</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;last_summary&quot;</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">&quot;phases&quot;</span><span class="p">])</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">summarize_training_log</span><span class="p">(</span><span class="s2">"run/training.jsonl"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="p">[</span><span class="s2">"last_training"</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">"last_summary"</span><span class="p">],</span> <span class="n">report</span><span class="p">[</span><span class="s2">"phases"</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>For an immediately runnable example from a source checkout, create a new run

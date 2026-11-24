@@ -385,7 +385,7 @@
   <section id="choose-a-compatible-deployment">
 <h1>Choose a compatible deployment<a class="headerlink" href="#choose-a-compatible-deployment" title="Link to this heading">#</a></h1>
 <p>Use the same image bundle, model and preprocessing from export through board
-execution. The included image trio is in <code class="docutils literal notranslate"><span class="pre">bitstreams/pynq-z2/</span></code>.</p>
+execution. Find the PYNQ-Z2 files in <code class="docutils literal notranslate"><span class="pre">bitstreams/pynq-z2/</span></code>.</p>
 <section id="select-the-image">
 <h2>Select the image<a class="headerlink" href="#select-the-image" title="Link to this heading">#</a></h2>
 <p>Pass its filename to <code class="docutils literal notranslate"><span class="pre">preflight</span></code>, <code class="docutils literal notranslate"><span class="pre">prepare</span></code>, <code class="docutils literal notranslate"><span class="pre">check</span></code>, <code class="docutils literal notranslate"><span class="pre">compile</span></code> and <code class="docutils literal notranslate"><span class="pre">connect</span></code>.
@@ -393,29 +393,27 @@ Keep the matching <code class="docutils literal notranslate"><span class="pre">.
 checks the bundle and selects its compiler/runtime profile; compilation reads
 the files without opening or programming a board. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prepared</span><span class="p">,</span> <span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">compiled</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-    <span class="n">prepared</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+    <span class="n">prepared</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">bitstream</span><span class="o">=</span><span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <p>Explicit target identifiers remain available for CPU-only exercises and
 compatibility. <code class="docutils literal notranslate"><span class="pre">pynq-z2</span></code> selects the general v1 compiler contract;
 <code class="docutils literal notranslate"><span class="pre">pynq_z2_spikemold_compact_v1</span></code> selects the compact package contract.</p>
-<p>On a compatible board, <code class="docutils literal notranslate"><span class="pre">connect(bitstream=...,</span> <span class="pre">unmeasured_inference=True)</span></code>
-uses the included image’s inference policy. <code class="docutils literal notranslate"><span class="pre">program=True</span></code> programs the image;
-the default is <code class="docutils literal notranslate"><span class="pre">False</span></code> and requires the matching overlay already loaded. The
-<a class="reference internal" href="board.html"><span class="std std-doc">board walkthrough</span></a> gives the complete first-run command.</p>
+<p>On PYNQ-Z2, connect with <code class="docutils literal notranslate"><span class="pre">unmeasured_inference=True</span></code>. Use <code class="docutils literal notranslate"><span class="pre">program=True</span></code>
+to load the overlay, or connect after loading it. See the
+<a class="reference internal" href="board.html"><span class="std std-doc">board walkthrough</span></a>.</p>
 </section>
 <section id="model-and-runtime-limits">
 <h2>Model and runtime limits<a class="headerlink" href="#model-and-runtime-limits" title="Link to this heading">#</a></h2>
-<p>The included image disables direct-current input, resident residual ADD/OR and
-weighted PL readout. Some bounded ADD models use host composition under a
-separate package contract. Package and runtime admission still check geometry
-and capacity. Gesture LIF32 needs at least eight tiles, exceeding the qualified
-maximum of four; compilation rejects it rather than rewriting the model. See
-<a class="reference internal" href="support.html"><span class="std std-doc">supported operations</span></a> for operator-level conditions.</p>
+<p>Use binary event windows for PYNQ-Z2 inference. Export supported ADD graphs with
+<a class="reference internal" href="residuals.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">compile_residual_add</span></code></span></a> and apply the classifier through
+<a class="reference internal" href="readout.html"><span class="std std-doc">host readout</span></a>. Compilation and board loading check the package
+geometry and image capacity. Use <a class="reference internal" href="preflight.html"><span class="std std-doc">preflight</span></a> to check fit before
+training. <a class="reference internal" href="support.html"><span class="std std-doc">Supported operations</span></a> lists the input and layer contracts.</p>
 <p>An ordinary resident <code class="docutils literal notranslate"><span class="pre">.spm</span></code> loads as a validated package without reconstructing
 its training model. <code class="docutils literal notranslate"><span class="pre">board.prepare_input(inputs)</span></code> snapshots an input for the
 current Board and model load. Each call still transfers and executes; Count
@@ -423,38 +421,51 @@ intermediates are recomputed. Reload, close or fault invalidates the handle.
 This optimization applies to admitted resident and Count paths, not all
 virtual or hybrid programs. Follow <a class="reference internal" href="recovery.html"><span class="std std-doc">runtime recovery</span></a> after faults.</p>
 </section>
-<section id="evidence-to-retain">
-<h2>Evidence to retain<a class="headerlink" href="#evidence-to-retain" title="Link to this heading">#</a></h2>
+<section id="retention-profiles">
+<h2>Retention profiles<a class="headerlink" href="#retention-profiles" title="Link to this heading">#</a></h2>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>Item</p></th>
-<th class="head"><p>Retain</p></th>
+<tr class="row-odd"><th class="head"><p>Path</p></th>
+<th class="head"><p>Retention β</p></th>
+<th class="head"><p>Selection</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Training</p></td>
-<td><p>Architecture, checkpoint, preprocessing and input identities.</p></td>
+<tr class="row-even"><td><p>PYNQ-Z2 image in <code class="docutils literal notranslate"><span class="pre">bitstreams/pynq-z2/</span></code></p></td>
+<td><p>1, 1/2, 1/4, 1/8, 1/16</p></td>
+<td><p>Standard <code class="docutils literal notranslate"><span class="pre">prepare</span></code> / <code class="docutils literal notranslate"><span class="pre">compile</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Export</p></td>
-<td><p>Source revision, image, shape/T, preparation and compiler reports.</p></td>
-</tr>
-<tr class="row-even"><td><p>Package</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.spm</span></code>, input, golden, head and label identities.</p></td>
-</tr>
-<tr class="row-odd"><td><p>Board</p></td>
-<td><p>SDK/native and bitstream/HWH/sidecar identities, plus execution receipt.</p></td>
-</tr>
-<tr class="row-even"><td><p>Measurement</p></td>
-<td><p>Input protocol, clock, wait policy, timing boundaries and raw receipt.</p></td>
+<tr class="row-odd"><td><p>Fractional candidate</p></td>
+<td><p>Standard values plus 3/4, 7/8, 15/16, 31/32</p></td>
+<td><p>Explicit candidate package and matching bit, HWH and hash-pinned candidate JSON</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Recheck the relevant boundary after changing any of these assets. The included
-image uses inference-only operation with <code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>. A successful
-functional run does not establish PL-only timing, electrical energy or
-full-dataset FPGA accuracy. <a class="reference internal" href="results.html"><span class="std std-doc">Measured results</span></a> and the separate
-<a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/energy.md">energy study</a> state their own model, image and measurement scopes.</p>
+<p>For the standard path, <code class="docutils literal notranslate"><span class="pre">decay_shift</span></code> is 0–4. During authoring,
+<code class="docutils literal notranslate"><span class="pre">decay=&quot;learnable&quot;</span></code> projects to the same values and <code class="docutils literal notranslate"><span class="pre">prepare</span></code> freezes the
+chosen shift.</p>
+<p>The fractional candidate uses distinct retention codes 5–8. For example,
+use <code class="docutils literal notranslate"><span class="pre">experimental_decay_code(0.75)</span></code> to select code 5 when deriving a
+candidate from a validated compact v12 package with
+<code class="docutils literal notranslate"><span class="pre">derive_fractional_candidate(base,</span> <span class="pre">codes)</span></code>. Supply one code per logical layer. The candidate loader checks the derived package and the image
+contract. Its integer reference approximates retention over an event gap with
+a Q6 coefficient and signed arithmetic rounding. Revalidate the integer golden
+and accuracy after changing a model’s retention.</p>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.fractional_decay</span><span class="w"> </span><span class="kn">import</span> <span class="n">experimental_decay_code</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">experimental_decay_code</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">beta</span> <span class="ow">in</span> <span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">0.875</span><span class="p">,</span> <span class="mf">0.9375</span><span class="p">,</span> <span class="mf">0.96875</span><span class="p">)]</span>
+<span class="go">[5, 6, 7, 8]</span>
+</pre></div>
+</div>
+</section>
+<section id="reproducibility">
+<h2>Reproducibility<a class="headerlink" href="#reproducibility" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Model</strong> · Checkpoint · Preprocessing · Input · Golden · Readout</p></li>
+<li><p><strong>Deployment</strong> · Source revision · Compiler report · Package · SDK · Bitstream bundle</p></li>
+<li><p><strong>Measurement</strong> · Clock · Wait policy · Timer boundary · Raw receipt</p></li>
+</ul>
+<p>See <a class="reference internal" href="results.html"><span class="std std-doc">measured results</span></a> and the <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/energy.md">energy study</a>.</p>
 </section>
 </section>
 
@@ -507,7 +518,8 @@ full-dataset FPGA accuracy. <a class="reference internal" href="results.html"><s
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#select-the-image">Select the image</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#model-and-runtime-limits">Model and runtime limits</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evidence-to-retain">Evidence to retain</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retention-profiles">Retention profiles</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reproducibility">Reproducibility</a></li>
 </ul>
   </nav></div>
 

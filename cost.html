@@ -401,7 +401,7 @@ sidecar available on the workstation.</p>
 </section>
 <section id="before-training-memory-pressure">
 <h2>Before training: memory pressure<a class="headerlink" href="#before-training-memory-pressure" title="Link to this heading">#</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">preflight</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;pynq-z2&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">report</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">preflight</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">example</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">"pynq-z2"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">spikepress</span><span class="o">.</span><span class="n">format_preflight</span><span class="p">(</span><span class="n">report</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -500,12 +500,12 @@ divided by spikes is not the intrinsic energy of a single spike or memory access
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">spikepress.energy</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_energy</span>
 
-<span class="n">calibration</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;qualified-energy-model.json&quot;</span><span class="p">))</span>
+<span class="n">calibration</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">"qualified-energy-model.json"</span><span class="p">))</span>
 <span class="n">prediction</span> <span class="o">=</span> <span class="n">predict_energy</span><span class="p">(</span>
     <span class="n">calibration</span><span class="p">,</span>
     <span class="n">binding</span><span class="o">=</span><span class="n">verified_run_binding</span><span class="p">,</span>  <span class="c1"># Independently verified current bit/model/evidence.</span>
-    <span class="n">effective_ac</span><span class="o">=</span><span class="n">logical_trace</span><span class="p">[</span><span class="s2">&quot;effective_ac&quot;</span><span class="p">],</span>
-    <span class="n">input_spikes</span><span class="o">=</span><span class="n">logical_trace</span><span class="p">[</span><span class="s2">&quot;input_spikes&quot;</span><span class="p">],</span>
+    <span class="n">effective_ac</span><span class="o">=</span><span class="n">logical_trace</span><span class="p">[</span><span class="s2">"effective_ac"</span><span class="p">],</span>
+    <span class="n">input_spikes</span><span class="o">=</span><span class="n">logical_trace</span><span class="p">[</span><span class="s2">"input_spikes"</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span>
 </pre></div>

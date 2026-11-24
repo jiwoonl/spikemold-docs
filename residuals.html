@@ -382,21 +382,17 @@
                   
   <section id="residual-addition">
 <h1>Residual addition<a class="headerlink" href="#residual-addition" title="Link to this heading">#</a></h1>
-<p>Residual ADD is supported through an explicit export path. The host retains
-and concatenates binary intermediate results; existing FPGA synapses consume
-the expanded inputs. This is host-composed execution, not a resident ADD
-instruction or a generic conversion of any training residual block.</p>
-<p>ADD preserves multiplicity: two coincident spikes produce 2. OR produces 1.
-Replacing one with the other changes the model. Resident OR is disabled on
-the included image. Its older <code class="docutils literal notranslate"><span class="pre">OrResidual</span></code> API remains for compatibility and
-other admitted profiles; it is not the recommended residual path here.</p>
+<p>Export residual addition with <code class="docutils literal notranslate"><span class="pre">spikepress.compile_residual_add</span></code>.
+The host retains and concatenates binary intermediate results, then passes
+the expanded inputs to the next FPGA segment. Two coincident spikes contribute
+two updates so that the merge preserves the trained graph’s arithmetic.</p>
 <section id="run-the-integer-export-example">
 <h2>Run the integer export example<a class="headerlink" href="#run-the-integer-export-example" title="Link to this heading">#</a></h2>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>examples/residual_add.py<span class="w"> </span>--output<span class="w"> </span>runs/residual-add
 </pre></div>
 </div>
 <p>Expected: <code class="docutils literal notranslate"><span class="pre">PASS_CPU_RESIDUAL_ADD</span></code>, counts <code class="docutils literal notranslate"><span class="pre">[[1,</span> <span class="pre">0]]</span></code> and
-<code class="docutils literal notranslate"><span class="pre">hardware:</span> <span class="pre">NOT_CHECKED</span></code>. The example uses the included image metadata and
+<code class="docutils literal notranslate"><span class="pre">hardware:</span> <span class="pre">NOT_CHECKED</span></code>. The example reads the PYNQ-Z2 profile and
 writes <code class="docutils literal notranslate"><span class="pre">model.spm</span></code>, <code class="docutils literal notranslate"><span class="pre">events.npy</span></code>, <code class="docutils literal notranslate"><span class="pre">golden_counts.npy</span></code> and <code class="docutils literal notranslate"><span class="pre">validation.json</span></code>.
 It verifies the model, compiler golden and artifact round trip on CPU.
 The golden is a count vector, not a dense spike tensor.</p>
@@ -433,9 +429,9 @@ or treat this example as surrogate-gradient training.</p>
 <p>Using the model and example input defined in the runnable script:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">program</span> <span class="o">=</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">compile_residual_add</span><span class="p">(</span>
     <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">example</span><span class="p">,</span>
-    <span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span>
+    <span class="n">bitstream</span><span class="o">=</span><span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="s2">&quot;new-residual-model.spm&quot;</span><span class="p">)</span>
+<span class="n">spikepress</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">program</span><span class="p">,</span> <span class="s2">"new-residual-model.spm"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

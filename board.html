@@ -385,8 +385,7 @@
   <section id="deploy-on-pynq-z2">
 <h1>Deploy on PYNQ-Z2<a class="headerlink" href="#deploy-on-pynq-z2" title="Link to this heading">#</a></h1>
 <p>Export a small model on your development machine, then run one input on the
-board. This walkthrough programs the included overlay on its first board run;
-it does not run as part of CPU tests.</p>
+board. The first command with <code class="docutils literal notranslate"><span class="pre">--program</span></code> loads the overlay.</p>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
 <ul class="simple">
@@ -427,9 +426,9 @@ Record the commit and retain the matching image trio with the model.</p>
 <p>Set your board login and hostname. Transfer the files to a directory under
 that account’s home directory:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">BOARD_HOST</span><span class="o">=</span>your-board-user@your-board-hostname
-ssh<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_HOST</span><span class="s2">&quot;</span><span class="w"> </span><span class="s1">&#39;mkdir -p spikepress-demo&#39;</span>
+ssh<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_HOST</span><span class="s2">"</span><span class="w"> </span><span class="s1">'mkdir -p spikepress-demo'</span>
 scp<span class="w"> </span>runs/board-model/model.spm<span class="w"> </span>runs/board-model/events.npy<span class="w"> </span>runs/board-model/golden.npy<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="s2">&quot;</span><span class="nv">$BOARD_HOST</span><span class="s2">:spikepress-demo/&quot;</span>
+<span class="w">  </span><span class="s2">"</span><span class="nv">$BOARD_HOST</span><span class="s2">:spikepress-demo/"</span>
 </pre></div>
 </div>
 <p>Clone or pull the same commit on the board to obtain the image, SDK source and
@@ -445,11 +444,11 @@ The path below is an example; check your board’s actual interpreter:</p>
 <span class="nb">cd</span><span class="w"> </span>SpikeMold
 <span class="c1"># Check out the same commit recorded during export if needed.</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">BOARD_PY</span><span class="o">=</span>/usr/local/share/pynq-venv/bin/python3
-<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>--version
-<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
-<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>-m<span class="w"> </span>spikepress.cli<span class="w"> </span>doctor<span class="w"> </span>--require<span class="w"> </span>runtime
-<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;from spikepress.backends.pynq import _native_runtime, _native_mmio; print(&quot;native imports OK&quot;)&#39;</span>
-<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>tools/check_bitstream_bundle.py
+<span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>--version
+<span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>.
+<span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>-m<span class="w"> </span>spikepress.cli<span class="w"> </span>doctor<span class="w"> </span>--require<span class="w"> </span>runtime
+<span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>-c<span class="w"> </span><span class="s1">'from spikepress.backends.pynq import _native_runtime, _native_mmio; print("native imports OK")'</span>
+<span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>tools/check_bitstream_bundle.py
 </pre></div>
 </div>
 <p>Optional: <code class="docutils literal notranslate"><span class="pre">&quot;$BOARD_PY&quot;</span> <span class="pre">-m</span> <span class="pre">spikepress.selftest</span></code> checks native packing, decoding
@@ -460,34 +459,32 @@ physical MMIO, DMA or board execution.</p>
 <h2>4. Program and compare one output<a class="headerlink" href="#program-and-compare-one-output" title="Link to this heading">#</a></h2>
 <p>From the board checkout, point to the transferred files and use a new output
 path:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">BOARD_DEMO</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/spikepress-demo&quot;</span>
-<span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">BOARD_DEMO</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/spikepress-demo"</span>
+<span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--bitstream<span class="w"> </span>bitstreams/pynq-z2/spikemold.bit<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--model<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/model.spm&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--inputs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/events.npy&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--golden<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/golden.npy&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/result.json&quot;</span><span class="w"> </span>--program
+<span class="w">  </span>--model<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/model.spm"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--inputs<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/events.npy"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--golden<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/golden.npy"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/result.json"</span><span class="w"> </span>--program
 </pre></div>
 </div>
 <p>On a compatible working board, expect <code class="docutils literal notranslate"><span class="pre">PASS_BOARD_GOLDEN</span></code> and
 <code class="docutils literal notranslate"><span class="pre">golden_compared:</span> <span class="pre">true</span></code>. The helper compares the full <code class="docutils literal notranslate"><span class="pre">T,H,W,C</span></code> output through
 the native dense decoder. <code class="docutils literal notranslate"><span class="pre">--golden</span></code> is limited to the bounded resident v12
 binary-event path; it is not a generic Count, virtual or hybrid validator.</p>
-<p><code class="docutils literal notranslate"><span class="pre">--program</span></code> explicitly loads the included overlay. The helper and runtime
-otherwise default to <code class="docutils literal notranslate"><span class="pre">program=False</span></code>: omit the flag only when the matching
-overlay is already loaded. The helper requests <code class="docutils literal notranslate"><span class="pre">unmeasured_inference=True</span></code>
-for the included image. A verified file alone does not attest the loaded image.</p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">--program</span></code> to load the overlay. With the matching overlay already loaded,
+omit the flag. The helper uses <code class="docutils literal notranslate"><span class="pre">unmeasured_inference=True</span></code>.</p>
 </section>
 <section id="reuse-an-input">
 <h2>5. Reuse an input<a class="headerlink" href="#reuse-an-input" title="Link to this heading">#</a></h2>
 <p>After the first run has loaded the matching overlay, repeat with a new output
 and <code class="docutils literal notranslate"><span class="pre">--prepared</span></code>:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;</span><span class="nv">$BOARD_PY</span><span class="s2">&quot;</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="s2">"</span><span class="nv">$BOARD_PY</span><span class="s2">"</span><span class="w"> </span>examples/run_board.py<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--bitstream<span class="w"> </span>bitstreams/pynq-z2/spikemold.bit<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--model<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/model.spm&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--inputs<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/events.npy&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--golden<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/golden.npy&quot;</span><span class="w"> </span>--prepared<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$BOARD_DEMO</span><span class="s2">/prepared-result.json&quot;</span>
+<span class="w">  </span>--model<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/model.spm"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--inputs<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/events.npy"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--golden<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/golden.npy"</span><span class="w"> </span>--prepared<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span><span class="s2">"</span><span class="nv">$BOARD_DEMO</span><span class="s2">/prepared-result.json"</span>
 </pre></div>
 </div>
 <p>For repeated calls in one session:</p>
@@ -496,10 +493,10 @@ and <code class="docutils literal notranslate"><span class="pre">--prepared</spa
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">spikepress</span>
 
-<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;spikepress-demo&quot;</span>
-<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;events.npy&quot;</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">&quot;bitstreams/pynq-z2/spikemold.bit&quot;</span><span class="p">,</span> <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
-    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">&quot;model.spm&quot;</span><span class="p">)</span>
+<span class="n">demo</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">"spikepress-demo"</span>
+<span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">"events.npy"</span><span class="p">,</span> <span class="n">allow_pickle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">spikepress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">bitstream</span><span class="o">=</span><span class="s2">"bitstreams/pynq-z2/spikemold.bit"</span><span class="p">,</span> <span class="n">unmeasured_inference</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">as</span> <span class="n">board</span><span class="p">:</span>
+    <span class="n">board</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">demo</span> <span class="o">/</span> <span class="s2">"model.spm"</span><span class="p">)</span>
     <span class="n">handle</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">prepare_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
     <span class="n">first</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
     <span class="n">second</span> <span class="o">=</span> <span class="n">board</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
@@ -512,9 +509,9 @@ Prepared timing excludes the initial encoding and seal.</p>
 </section>
 <section id="results-and-recovery">
 <h2>Results and recovery<a class="headerlink" href="#results-and-recovery" title="Link to this heading">#</a></h2>
-<p>A golden match checks this model and input. The included image’s observer has
-<code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>; the helper does not measure energy, PL-only latency
-or full-dataset accuracy. See <a class="reference internal" href="results.html"><span class="std std-doc">measured results</span></a> for their scope.
+<p>A golden match verifies this model and input. The helper reports
+<code class="docutils literal notranslate"><span class="pre">measurement_valid=false</span></code>. See <a class="reference internal" href="results.html"><span class="std std-doc">measured results</span></a> for timing and
+accuracy scopes.
 After a timeout or fault, do not retry, reload or program as a recovery shortcut:
 uncertain DMA ownership may be quarantined. Follow <a class="reference internal" href="recovery.html"><span class="std std-doc">runtime recovery</span></a>.</p>
 <p>The <a class="reference external" href="https://github.com/jiwoonl/SpikeMold/blob/main/docs/legacy-board-qualification.md">historical release-bundle procedure</a>
